@@ -9,7 +9,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum a
 
 ---
 
-**[<kbd> <br> Install <br> </kbd>]**
+**[<kbd> <br> Install <br> </kbd>](#Installation)**
 **[<kbd> <br> License <br> </kbd>](LICENSE.md)** 
 
 ---
