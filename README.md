@@ -3,7 +3,7 @@
 
 # LibGraphics
 <br>
-<img src="assets/logo.png" width="750" alt="banner">
+<img src="assets/logo.png" height="300" alt="banner">
 
 
 
