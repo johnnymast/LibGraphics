@@ -1,6 +1,7 @@
+
 <div align = center>
 
-
+# LibGraphics
 <br>
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum arcu, accumsan luctus velit. In arcu felis, bibendum nec ligula non, consectetur rutrum dui. Nam rutrum enim sed metus tempus fringilla. Donec pharetra libero eu nunc placerat, a ornare metus gravida. Fusce id tellus vitae nisl aliquet placerat vel eget purus. Nam imperdiet volutpat ipsum vitae faucibus. Donec purus nulla, porttitor et euismod sed, maximus non enim.
@@ -18,8 +19,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum a
 
 </div>
 
-# Featur
-# LibGraphics
 
 A lightweight C++ library for image manipulation designed specifically for AI projects. LibGraphics provides a clean, modern interface for common image processing operations, built on top of OpenCV.
 
