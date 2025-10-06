@@ -10,7 +10,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum a
 ---
 
 **[<kbd> <br> Install <br> </kbd>][Install]** 
-**[<kbd> <br> Quick Start <br> </kbd>][Quick Start]** 
+**[<kbd> <br> License <br> </kbd>][License]** 
 
 ---
 
