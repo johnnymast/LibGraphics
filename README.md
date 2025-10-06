@@ -3,6 +3,9 @@
 
 # LibGraphics
 <br>
+<img src="assets/logo.png" width="750" alt="banner">
+
+
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum arcu, accumsan luctus velit. In arcu felis, bibendum nec ligula non, consectetur rutrum dui. Nam rutrum enim sed metus tempus fringilla. Donec pharetra libero eu nunc placerat, a ornare metus gravida. Fusce id tellus vitae nisl aliquet placerat vel eget purus. Nam imperdiet volutpat ipsum vitae faucibus. Donec purus nulla, porttitor et euismod sed, maximus non enim.
 <br>
