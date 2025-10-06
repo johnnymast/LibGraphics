@@ -1,7 +1,6 @@
 
 <div align = center>
 
-<h1>LibGraphics</h1>
 <br>
 <img src="assets/logo.png" height="300" alt="banner">
 
