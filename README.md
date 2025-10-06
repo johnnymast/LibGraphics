@@ -9,8 +9,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum a
 
 ---
 
-**[<kbd> <br> Install <br> </kbd>][Install]** 
-**[<kbd> <br> License <br> </kbd>][License]** 
+**[<kbd> <br> Install <br> </kbd>]** 
+**[<kbd> <br> License <br> </kbd>]** 
 
 ---
 
