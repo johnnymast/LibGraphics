@@ -39,6 +39,15 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Prerequisites
 
+
+```bash
+sudo pacman -S --needed \
+abseil-cpp cblas ffmpeg freetype2 gcc-libs glib2 glibc \
+gst-plugins-base gst-plugins-base-libs gstreamer harfbuzz lapack \
+libdc1394 libglvnd libjpeg-turbo libjxl libpng libtiff libwebp \
+openexr openjpeg2 protobuf zlib hdf5 vtk
+```
+
 - C++17 compatible compiler
 - CMake 3.15 or higher
 - OpenCV 4.x
