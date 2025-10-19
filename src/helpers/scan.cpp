@@ -60,8 +60,8 @@ namespace helpers {
         const auto empty = std::make_tuple(0, 0, 0);
         auto last = empty;
 
-        int height = image.size();
-        int width = image[0].size();
+        int height = (int)image.size();
+        int width = (int)image[0].size();
 
         for (int attempt = 0; attempt < steps; ++attempt) {
             start_x += 1;

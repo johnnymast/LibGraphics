@@ -9,14 +9,15 @@ include(OpenCV)
 
 
 add_library(${PROJECT_NAME} SHARED
+        include/modules/stb_image.h
         src/library.cpp
         src/opencv_info.cpp
         src/helpers/scan.cpp
         src/helpers/scan.hpp
         src/color/Information.cpp
         include/LibGraphics/color/Information.hpp
-        src/color/Scanner.cpp
-        src/color/Scanner.hpp
+        src/color/BackgroundScanner.cpp
+        include/LibGraphics/color/BackgroundScanner.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
