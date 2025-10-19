@@ -1,8 +1,9 @@
 #pragma once
 
-namespace helpers {
+#include "../export.hpp"
 
-    class Color {
+namespace LibGraphics::Color {
+    class LIBGRAPHICS_API Information {
     public:
         /**
          * @brief Checks if the given RGB color is approximately green.
@@ -15,5 +16,4 @@ namespace helpers {
          */
         static bool is_greenish(int r, int g, int b, int buffer = 25);
     };
-
-} // namespace helpers
+}

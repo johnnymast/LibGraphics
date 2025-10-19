@@ -6,16 +6,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(OpenCV)
-include(Testing)
+
 
 add_library(${PROJECT_NAME} SHARED
         src/library.cpp
         src/opencv_info.cpp
         src/helpers/scan.cpp
         src/helpers/scan.hpp
-        src/helpers/color.cpp
-        src/helpers/color.hpp
-        tests/helpers/test_color.cpp
+        src/color/Information.cpp
+        include/LibGraphics/color/Information.hpp
+        src/color/Scanner.cpp
+        src/color/Scanner.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -32,3 +33,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
 )
+
+include(Testing)

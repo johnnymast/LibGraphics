@@ -1,8 +1,7 @@
-#include "color.hpp"
+#include "../include/LibGraphics/color/Information.hpp"
 
-namespace helpers {
-
-    bool Color::is_greenish(int r, int g, int b, int buffer) {
+namespace LibGraphics::Color {
+    bool Information::is_greenish(int r, int g, int b, int buffer) {
         constexpr int target_r = 71;
         constexpr int target_g = 145;
         constexpr int target_b = 114;
@@ -11,5 +10,4 @@ namespace helpers {
                (g >= target_g - buffer && g <= target_g + buffer) &&
                (b >= target_b - buffer && b <= target_b + buffer);
     }
-
-} // namespace helpers
+}

@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_LIBRARY_H
 #define GRAPHICS_LIBRARY_H
 
-#include "export.hpp"
+#include "LibGraphics/export.hpp"
 
 LIBGRAPHICS_API void hello();
 

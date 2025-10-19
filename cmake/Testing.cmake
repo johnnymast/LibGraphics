@@ -1,10 +1,11 @@
 include(FetchContent)
+# Catch2 v3
 FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/heads/main.zip
-        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v3.6.0
 )
-FetchContent_MakeAvailable(googletest)
+FetchContent_MakeAvailable(Catch2)
 
 enable_testing()
 
@@ -12,9 +13,20 @@ add_executable(test_color
         tests/helpers/test_color.cpp
 )
 
-target_link_libraries(test_color gtest_main)
-target_include_directories(test_color PRIVATE  ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Link your library (provides helpers::Color) and Catch2's main
+target_link_libraries(test_color
+        PRIVATE
+        LibGraphics
+        Catch2::Catch2WithMain
+)
 
+# Tests may include headers from src and include
+target_include_directories(test_color PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-add_test(NAME ColorTest COMMAND test_color)
-
+# Register tests
+include(CTest)
+include(Catch)
+catch_discover_tests(test_color)
