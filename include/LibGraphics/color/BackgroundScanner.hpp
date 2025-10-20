@@ -3,6 +3,7 @@
 #include "LibGraphics/export.hpp"
 
 #include <vector>
+#include <cstdint>
 
 namespace LibGraphics::Color {
     class LIBGRAPHICS_API BackgroundScanner {

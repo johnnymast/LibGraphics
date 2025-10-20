@@ -1,6 +1,7 @@
 #include "LibGraphics/color/BackgroundScanner.hpp"
 
 #include <iostream>
+#include <cstdint>
 
 namespace LibGraphics::Color {
     int BackgroundScanner::background_color_change_up(const std::vector<std::vector<uint8_t> > &image,
