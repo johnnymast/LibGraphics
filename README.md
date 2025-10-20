@@ -5,9 +5,7 @@
 
   ![C++17+](https://img.shields.io/badge/C++-17%2B-blue.svg)
    [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![CI](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml/badge.svg)](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml)
-  ![Badge Pinky Winky]
-
+  [![Testing](https://github.com/johnnymast/LibGraphics/actions/workflows/testing.yml/badge.svg)](https://github.com/johnnymast/LibGraphics/actions/workflows/testing.yml)
 </div>
 
 <div align="center">
