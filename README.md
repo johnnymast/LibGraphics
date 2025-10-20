@@ -1,10 +1,7 @@
 
-<div align = center>
+<p align="center">
 
-<br>
 <img src="assets/logo.png" height="300" alt="banner">
-
-<p align="center"><em>Elegant CLI image rendering with branded output</em></p>
 
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/>
@@ -12,6 +9,10 @@
   <img src="https://img.shields.io/badge/C++-17%2B-blue.svg" alt="C++17+"/>
   <img src="https://img.shields.io/badge/ImageMagick-required-critical.svg" alt="ImageMagick required"/>
   [![CI](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml/badge.svg)](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml)
+
+</p>
+
+<div align="center">
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum arcu, accumsan luctus velit. In arcu felis, bibendum nec ligula non, consectetur rutrum dui. Nam rutrum enim sed metus tempus fringilla. Donec pharetra libero eu nunc placerat, a ornare metus gravida. Fusce id tellus vitae nisl aliquet placerat vel eget purus. Nam imperdiet volutpat ipsum vitae faucibus. Donec purus nulla, porttitor et euismod sed, maximus non enim.
 <br>
