@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../export.hpp"
+#include "internals/export.hpp"
 
 namespace LibGraphics::Color {
     class LIBGRAPHICS_API Information {

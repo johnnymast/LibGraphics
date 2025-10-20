@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LibGraphics/export.hpp"
+#include "internals/export.hpp"
 
 #include <vector>
 #include <cstdint>

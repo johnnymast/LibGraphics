@@ -3,7 +3,7 @@
 
 #pragma once
 #include <string>
-#include "LibGraphics/export.hpp"
+#include "internals/export.hpp"
 
 LIBGRAPHICS_API std::string getOpenCVInfo();
 

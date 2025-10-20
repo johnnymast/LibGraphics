@@ -5,25 +5,42 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(Version)
 include(OpenCV)
-
 
 add_library(${PROJECT_NAME} SHARED
         include/modules/stb_image.h
-        src/library.cpp
+        include/modules/stb_image_write.h
+
         src/opencv_info.cpp
-        src/helpers/scan.cpp
-        src/helpers/scan.hpp
         src/color/Information.cpp
-        include/LibGraphics/color/Information.hpp
         src/color/BackgroundScanner.cpp
+        src/match/Region.cpp
+        src/match/MatchResult.cpp
+        src/match/TemplateMatcher.cpp
+        src/helpers/OpenCV.cpp
+        src/LibGraphics.cpp
+        src/Image.cpp
+
+        include/LibGraphics/color/Information.hpp
         include/LibGraphics/color/BackgroundScanner.hpp
+        include/LibGraphics/match/TemplateMatcher.hpp
+        include/LibGraphics/match/Region.hpp
+        include/LibGraphics/match/MatchResult.hpp
+        include/LibGraphics/match/LowConfidenceException.hpp
+        include/LibGraphics/helpers/OpenCV.hpp
+        include/LibGraphics/Image.hpp
+        include/LibGraphics.hpp
+        include/LibGraphics/match/LowConfidenceException.hpp
+        include/LibGraphics/match/MatchOptions.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         ${OpenCV_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/generated)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
 

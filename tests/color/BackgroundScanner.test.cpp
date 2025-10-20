@@ -3,7 +3,6 @@
 #include "modules/stb_image.h"
 
 #include <catch2/catch_test_macros.hpp>
-#include <filesystem>
 #include <iostream>
 
 using LibGraphics::Color::BackgroundScanner;
@@ -51,7 +50,7 @@ TEST_CASE("background_color_change_up: returns correctly detected index 4", "[Ba
 
 TEST_CASE("background_color_change_up: returns -1 if there was no color change detected", "[BackgroundScanner][up]") {
     auto img = load_grayscale_from_png("../tests/assets/strips/1x10blank.png");
-    REQUIRE(BackgroundScanner::background_color_change_up(img, 0, 9, 15, true) == -1);
+    REQUIRE(BackgroundScanner::background_color_change_up(img, 0, 9, 15, false) == -1);
 }
 
 

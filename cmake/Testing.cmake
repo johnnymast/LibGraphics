@@ -10,8 +10,11 @@ FetchContent_MakeAvailable(Catch2)
 enable_testing()
 
 add_executable(test_color
-        tests/color/test_color.cpp
-        tests/color/test_backgroundscanner.cpp
+        tests/color/Color.test.cpp
+        tests/color/BackgroundScanner.test.cpp
+        tests/match/Region.test.cpp
+        tests/match/MatchResult.test.cpp
+        tests/match/TemplateMatcher.test.cpp
 )
 
 # Link your library (provides helpers::Color) and Catch2's main
@@ -32,4 +35,3 @@ include(CTest)
 include(Catch)
 
 catch_discover_tests(test_color)
-#catch_discover_tests(test_backgroundscanner)
