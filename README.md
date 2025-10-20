@@ -3,11 +3,8 @@
 
 <img src="assets/logo.png" height="300" alt="banner">
 
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/>
-  </a>
-  <img src="https://img.shields.io/badge/C++-17%2B-blue.svg" alt="C++17+"/>
-  <img src="https://img.shields.io/badge/ImageMagick-required-critical.svg" alt="ImageMagick required"/>
+  ![C++17+](https://img.shields.io/badge/C++-17%2B-blue.svg)
+   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![CI](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml/badge.svg)](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml)
 
 </p>
