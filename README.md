@@ -1,5 +1,5 @@
 
-<p align="center">
+<div align="center">
 
 <img src="assets/logo.png" height="300" alt="banner">
 
@@ -7,7 +7,7 @@
    [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![CI](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml/badge.svg)](https://github.com/johnnymast/LibGraphics/actions/workflows/ci.yml)
 
-</p>
+</div>
 
 <div align="center">
 
