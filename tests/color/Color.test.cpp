@@ -1,5 +1,6 @@
+#include "LibGraphics.hpp"
+
 #include <catch2/catch_test_macros.hpp>
-#include "../../include/LibGraphics/color/Information.hpp"
 
 using LibGraphics::Color::Information;
 

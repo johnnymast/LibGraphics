@@ -8,27 +8,33 @@
 #include <vector>
 #include <opencv2/core/mat.hpp>
 
-struct Image {
-    std::vector<uint8_t> data;  // Raw pixel data (e.g., RGB or RGBA)
-    int width = 0;
-    int height = 0;
-    int channels = 0;
+namespace LibGraphics {
+    struct Image {
+        std::vector<uint8_t> data;  // Raw pixel data (e.g., RGB or RGBA)
+        int width = 0;
+        int height = 0;
+        int channels = 0;
 
-    // Load from disk using stb_image
-    static Image load(const std::string& path);
+        static Image load(const std::string& path);
 
-    // Save to disk using stb_image_write
-    bool save(const std::string& path, int quality = 90) const;
+        bool save(const std::string& path, int quality = 90) const;
 
-    static Image fromMat(const cv::Mat& mat);
+        [[nodiscard]] [[deprecated("Use the converter class instead")]]
+        static Image fromMat(const cv::Mat& mat);
 
-    // Accessor methods for image properties
-    const uint8_t* getData() const { return data.data(); }
-    uint8_t* getData() { return data.data(); }
-    int getWidth() const { return width; }
-    int getHeight() const { return height; }
-    int getChannels() const { return channels; }
+        [[nodiscard]] [[deprecated("Use member data instead")]]
+        const uint8_t* getData() const { return data.data(); }
 
-    // friend std::ostream& operator<<(std::ostream& os, const Image& image);
+        [[nodiscard]] [[deprecated("Use member data instead")]]
+        uint8_t* getData() { return data.data(); }
 
-};
+        [[nodiscard]] [[deprecated("Use member width instead")]]
+        int getWidth() const { return width; }
+
+        [[nodiscard]] [[deprecated("Use member height instead")]]
+        int getHeight() const { return height; }
+
+        [[nodiscard]] [[deprecated("Use member channels instead")]]
+        int getChannels() const { return channels; }
+   };
+}

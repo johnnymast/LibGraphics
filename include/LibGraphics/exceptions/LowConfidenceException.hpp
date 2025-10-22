@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace LibGraphics::Match {
+namespace LibGraphics::Exceptions {
 
     class LowConfidenceException : public std::runtime_error {
     public:

@@ -28,6 +28,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum a
 
 A lightweight C++ library for image manipulation designed specifically for AI projects. LibGraphics provides a clean, modern interface for common image processing operations, built on top of OpenCV.
 
+
+## TODO
+
+- [ ] Converter::imageToPix does not work also there is no test once fixed enable it in the ocr 
+- [ ] Fix unit tests for LibGraphics/Image to use depricated functions
+- [ ] Unit test LibGraphics/utils/Converter TEST_CASE("Converter::ImageToMat - Valid Image", "[Converter]") color check fails
+- [ ] Unit test LibGraphics/utils/Converter.hpp add tests for imageToPix()
+
 ## Features
 
 - 🚀 Modern C++17 implementation
@@ -49,12 +57,15 @@ sudo pacman -S --needed \
 abseil-cpp cblas ffmpeg freetype2 gcc-libs glib2 glibc \
 gst-plugins-base gst-plugins-base-libs gstreamer harfbuzz lapack \
 libdc1394 libglvnd libjpeg-turbo libjxl libpng libtiff libwebp \
-openexr openjpeg2 protobuf zlib hdf5 vtk
+openexr openjpeg2 protobuf zlib hdf5 vtk tesseract tesseract-data-osd tesseract-data-eng 
 ```
 
 - C++17 compatible compiler
 - CMake 3.15 or higher
 - OpenCV 4.x
+- extra/tesseract 5.5.1-1 [installed]
+- extra/`tesseract-data-eng` 2:4.1.0-4 (tesseract-data) [installed]
+- extra/tesseract-data-osd 2:4.1.0-4 [installed]
 
 ## Installation
 

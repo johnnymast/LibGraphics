@@ -1,19 +1,19 @@
 #include "LibGraphics/match/TemplateMatcher.hpp"
-#include "LibGraphics/match/LowConfidenceException.hpp"
+#include "LibGraphics/exceptions/LowConfidenceException.hpp"
 #include "LibGraphics/match/MatchOptions.hpp"
 
-#include <LibGraphics/helpers/OpenCV.hpp>
+#include <LibGraphics/utils/Converter.hpp>
 #include "LibGraphics/Image.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 #include <algorithm>
 
-using LibGraphics::Helpers::OpenCv;
+using LibGraphics::Utils::Converter;
 using LibGraphics::Match::TemplateMatcher;
 using LibGraphics::Match::MatchResult;
 using LibGraphics::Match::MatchOptions;
-using LibGraphics::Match::LowConfidenceException;
+using LibGraphics::Exceptions::LowConfidenceException;
 
 // Helper function to normalize score based on match method
 static double normalizeScore(double score, int matchMethod) {
@@ -65,8 +65,8 @@ MatchResult TemplateMatcher::matchTemplateSingle(
     const Image& target,
     const MatchOptions& options
 ) {
-    cv::Mat queryMat = OpenCv::ImageToMat(query);
-    cv::Mat targetMat = OpenCv::ImageToMat(target);
+    cv::Mat queryMat = Converter::ImageToMat(query);
+    cv::Mat targetMat = Converter::ImageToMat(target);
 
     // Ensure compatible formats
     ensureCompatibleFormats(queryMat, targetMat);
@@ -108,8 +108,8 @@ std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
     const MatchOptions& options
 ) {
     std::vector<MatchResult> results;
-    cv::Mat queryMat = OpenCv::ImageToMat(query);
-    cv::Mat targetMat = OpenCv::ImageToMat(target);
+    cv::Mat queryMat = Converter::ImageToMat(query);
+    cv::Mat targetMat = Converter::ImageToMat(target);
 
     // Ensure compatible formats
     ensureCompatibleFormats(queryMat, targetMat);

@@ -15,6 +15,8 @@ add_executable(test_color
         tests/match/Region.test.cpp
         tests/match/MatchResult.test.cpp
         tests/match/TemplateMatcher.test.cpp
+        tests/utils/Converter.test.cpp
+        tests/ocr/OcrTextReader.test.cpp
 )
 
 # Link your library (provides helpers::Color) and Catch2's main

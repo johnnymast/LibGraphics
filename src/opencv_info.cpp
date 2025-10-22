@@ -1,5 +1,5 @@
 #include "opencv_info.hpp"
-#include "../include/internals/export.hpp"
+#include "internals/export.hpp"
 #include <opencv2/core/version.hpp>
 
 LIBGRAPHICS_API std::string getOpenCVInfo() {

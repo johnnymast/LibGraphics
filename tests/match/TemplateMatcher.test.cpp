@@ -1,15 +1,14 @@
+#include "LibGraphics.hpp"
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
-
-#include "LibGraphics/match/TemplateMatcher.hpp"
-#include "LibGraphics/match/LowConfidenceException.hpp"
-#include "LibGraphics/Image.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <filesystem>
 
 using namespace LibGraphics;
 using namespace LibGraphics::Match;
+using namespace LibGraphics::Exceptions;
 
 TEST_CASE("matchTemplateSingle basic functionality", "[TemplateMatcher][matchTemplateSingle]") {
     const std::filesystem::path assetsPath = "../tests/assets/match/single";
