@@ -33,6 +33,7 @@ A lightweight C++ library for image manipulation designed specifically for AI pr
 
 - [ ] Converter::imageToPix does not work also there is no test once fixed enable it in the ocr 
 - [ ] Fix unit tests for LibGraphics/Image to use depricated functions
+- [ ] Make the scan utils use Image to the can be used from the main module
 - [ ] Unit test LibGraphics/utils/Converter TEST_CASE("Converter::ImageToMat - Valid Image", "[Converter]") color check fails
 - [ ] Unit test LibGraphics/utils/Converter.hpp add tests for imageToPix()
 
