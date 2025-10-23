@@ -283,3 +283,57 @@ TEST_CASE("Converter Round-Trip - Mat to Image to Mat", "[Converter]") {
     // Should be identical
     CHECK(maxDiff == 0.0);
 }
+
+#include <catch2/catch_test_macros.hpp>
+#include <LibGraphics/Image.hpp>
+#include <LibGraphics/utils/Converter.hpp>
+#include <leptonica/allheaders.h>
+
+using namespace LibGraphics;
+
+TEST_CASE("Converter::imageToPix handles valid RGB or RGBA image", "[Converter]") {
+    Image img = Image::load("../tests/assets/utils/black_background_white_text.png");
+    REQUIRE(img.width > 0);
+    REQUIRE(img.height > 0);
+    REQUIRE((img.channels == 3 || img.channels == 4));
+
+    Pix* pix = Converter::imageToPix(img);
+    REQUIRE(pix != nullptr);
+    REQUIRE(pixGetWidth(pix) == img.width);
+    REQUIRE(pixGetHeight(pix) == img.height);
+    REQUIRE(pixGetDepth(pix) == 32);
+
+    pixDestroy(&pix);
+}
+
+TEST_CASE("Converter::imageToPix handles grayscale image", "[Converter]") {
+    Image img = Image::load("../tests/assets/utils/grayscale_text.png");
+    REQUIRE(img.width > 0);
+    REQUIRE(img.height > 0);
+    REQUIRE(img.channels == 1);
+
+    Pix* pix = Converter::imageToPix(img);
+    REQUIRE(pix != nullptr);
+    REQUIRE(pixGetDepth(pix) == 8);
+
+    pixDestroy(&pix);
+}
+
+TEST_CASE("Converter::imageToPix throws on empty image", "[Converter]") {
+    Image img;
+    img.width = 0;
+    img.height = 0;
+    img.channels = 3;
+
+    REQUIRE_THROWS_AS(Converter::imageToPix(img), std::runtime_error);
+}
+
+TEST_CASE("Converter::imageToPix throws on unsupported channel count", "[Converter]") {
+    Image img;
+    img.width = 10;
+    img.height = 10;
+    img.channels = 2;
+    img.data.resize(10 * 10 * 2, 255);
+
+    REQUIRE_THROWS_AS(Converter::imageToPix(img), std::runtime_error);
+}

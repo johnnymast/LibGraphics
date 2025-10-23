@@ -14,9 +14,7 @@
 using LibGraphics::Utils::Converter;
 
 namespace LibGraphics::Ocr {
-
     std::string OcrTextReader::CleanOcrOutput(const std::string &input) {
-
         auto start = input.find_first_not_of(" \t\n\r");
         auto end = input.find_last_not_of(" \t\n\r");
 
@@ -29,31 +27,33 @@ namespace LibGraphics::Ocr {
     }
 
     OcrResult OcrTextReader::ReadFromImage(const Image &image, const char &language) {
-        OcrResult result = { "", 0.0f};
+        OcrResult result = {"", 0.0f};
+        Pix *pix = nullptr;
+        tesseract::TessBaseAPI *api = nullptr;
 
         try {
+            pix = Converter::imageToPix(image); // may throw
 
-            tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
-
+            api = new tesseract::TessBaseAPI();
             if (api->Init(NULL, &language)) {
-                fprintf(stderr, "Could not initialize tesseract.\n");
-                exit(1);
+                delete api;
+                pixDestroy(&pix);
+                return result;
             }
 
-            Pix *pix = pixRead("../tests/assets/ocr/ocr-test.png");
-            // Pix* pix = Converter::imageToPix(image);
-
             api->SetImage(pix);
-
             result.text = CleanOcrOutput(std::string(api->GetUTF8Text()));
             result.confidence = api->MeanTextConf();
 
             api->End();
-
             delete api;
-
             pixDestroy(&pix);
-        } catch (const std::ios_base::failure &e) {
+        } catch (const std::exception &e) {
+            if (api) {
+                api->End();
+                delete api;
+            }
+            if (pix) pixDestroy(&pix);
             return result;
         }
 
