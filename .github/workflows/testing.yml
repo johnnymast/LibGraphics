@@ -15,6 +15,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug Tesseract setup
+        run: |
+          echo "Tesseract version:"
+          tesseract --version
+          
+          echo "Looking for tessdata:"
+          find /usr/share -type d -name tessdata
+          ls /usr/share/tesseract-ocr/4.00/tessdata || true
+          ls /usr/share/tesseract-ocr/tessdata || true
+          ls /usr/share/tessdata || true
+
       - name: Install dependencies
         run: |
           sudo apt-get update
