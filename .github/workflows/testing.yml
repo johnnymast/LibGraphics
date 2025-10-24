@@ -20,16 +20,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake build-essential pkg-config libopencv-dev libleptonica-dev tesseract-ocr libtesseract-dev
 
-      - name: Debug Tesseract setup
+#      - name: Debug Tesseract setup
+#        run: |
+#          echo "Tesseract version:"
+#          tesseract --version
+#
+#          echo "Looking for tessdata:"
+#          find /usr/share -type d -name tessdata
+#          ls /usr/share/tesseract-ocr/4.00/tessdata || true
+#          ls /usr/share/tesseract-ocr/tessdata || true
+#          ls /usr/share/tessdata || true
+
+      - name: Set TESSDATA_PREFIX dynamically
         run: |
-          echo "Tesseract version:"
-          tesseract --version
-          
-          echo "Looking for tessdata:"
-          find /usr/share -type d -name tessdata
-          ls /usr/share/tesseract-ocr/4.00/tessdata || true
-          ls /usr/share/tesseract-ocr/tessdata || true
-          ls /usr/share/tessdata || true
+          export TESSDATA_PREFIX=$(find /usr/share -type d -name tessdata | head -n 1)
+          echo "TESSDATA_PREFIX=$TESSDATA_PREFIX" >> $GITHUB_ENV
+
 
       - name: Configure
         run: |
