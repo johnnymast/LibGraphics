@@ -49,16 +49,7 @@ add_library(${PROJECT_NAME} SHARED
 
         include/LibGraphics/Image.hpp
         include/LibGraphics.hpp
-
-
 )
-
-#target_include_directories(${PROJECT_NAME} PUBLIC
-#        ${OpenCV_INCLUDE_DIRS}
-#        ${CMAKE_CURRENT_SOURCE_DIR}/include
-#)
-#
-#target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR}/generated)
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC
@@ -68,14 +59,6 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_BINARY_DIR}/generated
 )
 
-
-#target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
-#
-#target_link_libraries(libgraphics_main
-#        PRIVATE
-#        Tesseract::Tesseract
-#        leptonica
-#)
 target_link_libraries(${PROJECT_NAME}
         PUBLIC
         ${OpenCV_LIBS}
@@ -83,7 +66,6 @@ target_link_libraries(${PROJECT_NAME}
         Tesseract::Tesseract
         leptonica
 )
-
 
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBGRAPHICS_EXPORTS)

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <LibGraphics/Image.hpp>
 
 namespace LibGraphics::Color {
     class LIBGRAPHICS_API BackgroundScanner {
@@ -14,6 +15,7 @@ namespace LibGraphics::Color {
                                    int start_y = 600,
                                    int max_attempts = 600,
                                    bool debug = false);
+
 
         static int background_color_change_down(const std::vector<std::vector<uint8_t>>& image,
                                          int start_x = 0,
@@ -32,6 +34,31 @@ namespace LibGraphics::Color {
                                           int start_y = 600,
                                           int max_attempts = 600,
                                           bool debug = false);
+
+
+        static int background_color_change_up(const Image& img,
+                                      int start_x = 0,
+                                      int start_y = 600,
+                                      int max_attempts = 600,
+                                      bool debug = false);
+
+        static int background_color_change_down(const Image& img,
+                                                int start_x = 0,
+                                                int start_y = 0,
+                                                int max_attempts = 600,
+                                                bool debug = false);
+
+        static int background_color_change_left(const Image& img,
+                                                int start_x = 0,
+                                                int start_y = 600,
+                                                int max_attempts = 600,
+                                                bool debug = false);
+
+        static int background_color_change_right(const Image& img,
+                                                 int start_x = 0,
+                                                 int start_y = 600,
+                                                 int max_attempts = 600,
+                                                 bool debug = false);
 
     };
 }

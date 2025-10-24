@@ -9,6 +9,7 @@
 using LibGraphics::Image;
 
 namespace LibGraphics::Utils {
+
     Pix *Converter::imageToPix(Image &image) {
         // Note: RGBA is not supported, instead, conversion to RGB is forced.
         Pix *pix = nullptr;
@@ -68,52 +69,8 @@ namespace LibGraphics::Utils {
 
         pixEndianByteSwap(pix);
 
-        image.metadata.pixelFormat = PixelFormat::BGRA;
-        image.metadata.byteOrder = ByteOrder::Swapped;
-
         return pix;
     }
-
-    // Image Converter::pixToImage(Pix* pix) {
-    //     if (!pix || pixGetDepth(pix) != 32) {
-    //         throw std::runtime_error("[Converter] Only 32bpp Pix supported");
-    //     }
-    //
-    //     const int width = pixGetWidth(pix);
-    //     const int height = pixGetHeight(pix);
-    //     const int channels = 4;
-    //
-    //     Image image;
-    //     image.width = width;
-    //     image.height = height;
-    //     image.channels = channels;
-    //     image.data.reserve(width * height * channels);
-    //
-    //     l_uint32* pixData = pixGetData(pix);
-    //     const int wpl = pixGetWpl(pix); // words per line
-    //
-    //     for (int y = 0; y < height; ++y) {
-    //         l_uint32* line = pixData + y * wpl;
-    //         for (int x = 0; x < width; ++x) {
-    //             l_uint32 pixel = line[x];
-    //
-    //             // Unpack RGBA from pixel: R = byte 0, G = byte 1, A = byte 2, B = byte 3
-    //             uint8_t r = pixel & 0xFF;
-    //             uint8_t g = (pixel >> 8) & 0xFF;
-    //             uint8_t b = (pixel >> 16) & 0xFF;
-    //             uint8_t a = (pixel >> 24) & 0xFF;
-    //
-    //             image.data.push_back(r);
-    //             image.data.push_back(g);
-    //             image.data.push_back(b);
-    //             image.data.push_back(a);
-    //         }
-    //     }
-    //
-    //     image.metadata.pixelFormat = PixelFormat::RGBA;
-    //     image.metadata.byteOrder = ByteOrder::Native;
-    //     return image;
-    // }
 
     Image Converter::pixToImage(Pix* pix) {
         int width = pixGetWidth(pix);
@@ -156,8 +113,6 @@ namespace LibGraphics::Utils {
 
         return img;
     }
-
-
 
     cv::Mat Converter::ImageToMat(const Image &image) {
         if (image.data.empty() || image.width <= 0 || image.height <= 0 || image.channels <= 0) {

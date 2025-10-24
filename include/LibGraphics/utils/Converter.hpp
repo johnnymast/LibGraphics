@@ -3,6 +3,7 @@
 #include "LibGraphics/Image.hpp"
 
 #include <leptonica/allheaders.h>
+#include <opencv2/core/mat.hpp>
 
 using LibGraphics::Image;
 

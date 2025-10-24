@@ -11,12 +11,14 @@ enable_testing()
 
 add_executable(test_color
         tests/color/Color.test.cpp
-        tests/color/BackgroundScanner.test.cpp
+#        tests/color/BackgroundScanner.test.cpp
+        tests/color/BackgroundScanner.wrappers.test.cpp
         tests/match/Region.test.cpp
         tests/match/MatchResult.test.cpp
         tests/match/TemplateMatcher.test.cpp
         tests/utils/Converter.test.cpp
         tests/ocr/OcrTextReader.test.cpp
+        tests/image.test.cpp
 )
 
 # Link your library (provides helpers::Color) and Catch2's main
