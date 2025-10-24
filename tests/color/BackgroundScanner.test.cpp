@@ -53,7 +53,6 @@ TEST_CASE("background_color_change_up: returns -1 if there was no color change d
     REQUIRE(BackgroundScanner::background_color_change_up(img, 0, 9, 15, false) == -1);
 }
 
-
 // background_color_change_down
 TEST_CASE("background_color_change_down: returns -1 if attempts exceeded", "[BackgroundScanner][down]") {
     auto img = load_grayscale_from_png("../tests/assets/strips/down_1x10p8.png");
@@ -99,7 +98,7 @@ TEST_CASE("background_color_change_left: returns correctly detected index 5", "[
 
 TEST_CASE("background_color_change_left: returns -1 if there was no color change detected", "[BackgroundScanner][left]") {
     auto img = load_grayscale_from_png("../tests/assets/strips/10x1blank.png");
-    REQUIRE(BackgroundScanner::background_color_change_left(img, 9, 0, 15, true) == -1);
+    REQUIRE(BackgroundScanner::background_color_change_left(img, 9, 0, 15, false) == -1);
 }
 
 

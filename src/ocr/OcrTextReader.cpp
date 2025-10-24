@@ -10,7 +10,6 @@
 #include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
 
-
 using LibGraphics::Utils::Converter;
 
 namespace LibGraphics::Ocr {
@@ -32,7 +31,8 @@ namespace LibGraphics::Ocr {
         tesseract::TessBaseAPI *api = nullptr;
 
         try {
-            pix = Converter::imageToPix(image); // may throw
+            Image imageCopy = image.clone();
+            pix = Converter::imageToPix(imageCopy); // may throw
 
             api = new tesseract::TessBaseAPI();
             if (api->Init(NULL, &language)) {

@@ -3,14 +3,14 @@
 
 #include <iostream>
 #include <leptonica/allheaders.h>
+#include <opencv2/imgproc.hpp>
 #include <stdexcept>
 
 using LibGraphics::Image;
 
 namespace LibGraphics::Utils {
-    Pix *Converter::imageToPix(const Image &image) {
+    Pix *Converter::imageToPix(Image &image) {
         // Note: RGBA is not supported, instead, conversion to RGB is forced.
-
         Pix *pix = nullptr;
 
         if (image.data.empty() || image.width <= 0 || image.height <= 0) {
@@ -31,14 +31,15 @@ namespace LibGraphics::Utils {
                 memcpy(pixData + y * wpl * 4, srcRow, image.width);
             }
         } else if (image.channels == 3 || image.channels == 4) {
-            std::cout << "[Converter] Processing as RGB" << (image.channels == 4 ? "A" : "") << " (32 bpp)" << std::endl;
+            std::cout << "[Converter] Processing as RGB" << (image.channels == 4 ? "A" : "") << " (32 bpp)" <<
+                    std::endl;
             pix = pixCreate(image.width, image.height, 32);
             if (!pix) {
                 std::cerr << "[Converter] ERROR: Failed to create RGB Pix" << std::endl;
                 throw std::runtime_error("Failed to create RGB Pix");
             }
 
-            l_uint32* pixData = reinterpret_cast<l_uint32*>(pixGetData(pix));
+            l_uint32 *pixData = reinterpret_cast<l_uint32 *>(pixGetData(pix));
             int wpl = pixGetWpl(pix);
 
             for (int y = 0; y < image.height; ++y) {
@@ -67,8 +68,96 @@ namespace LibGraphics::Utils {
 
         pixEndianByteSwap(pix);
 
+        image.metadata.pixelFormat = PixelFormat::BGRA;
+        image.metadata.byteOrder = ByteOrder::Swapped;
+
         return pix;
     }
+
+    // Image Converter::pixToImage(Pix* pix) {
+    //     if (!pix || pixGetDepth(pix) != 32) {
+    //         throw std::runtime_error("[Converter] Only 32bpp Pix supported");
+    //     }
+    //
+    //     const int width = pixGetWidth(pix);
+    //     const int height = pixGetHeight(pix);
+    //     const int channels = 4;
+    //
+    //     Image image;
+    //     image.width = width;
+    //     image.height = height;
+    //     image.channels = channels;
+    //     image.data.reserve(width * height * channels);
+    //
+    //     l_uint32* pixData = pixGetData(pix);
+    //     const int wpl = pixGetWpl(pix); // words per line
+    //
+    //     for (int y = 0; y < height; ++y) {
+    //         l_uint32* line = pixData + y * wpl;
+    //         for (int x = 0; x < width; ++x) {
+    //             l_uint32 pixel = line[x];
+    //
+    //             // Unpack RGBA from pixel: R = byte 0, G = byte 1, A = byte 2, B = byte 3
+    //             uint8_t r = pixel & 0xFF;
+    //             uint8_t g = (pixel >> 8) & 0xFF;
+    //             uint8_t b = (pixel >> 16) & 0xFF;
+    //             uint8_t a = (pixel >> 24) & 0xFF;
+    //
+    //             image.data.push_back(r);
+    //             image.data.push_back(g);
+    //             image.data.push_back(b);
+    //             image.data.push_back(a);
+    //         }
+    //     }
+    //
+    //     image.metadata.pixelFormat = PixelFormat::RGBA;
+    //     image.metadata.byteOrder = ByteOrder::Native;
+    //     return image;
+    // }
+
+    Image Converter::pixToImage(Pix* pix) {
+        int width = pixGetWidth(pix);
+        int height = pixGetHeight(pix);
+        int depth = pixGetDepth(pix);
+
+        Image img;
+        img.width = width;
+        img.height = height;
+
+        if (depth == 8) {
+            img.channels = 1;
+            img.data.resize(width * height);
+
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    l_uint32 pixel;
+                    pixGetPixel(pix, x, y, &pixel);
+                    img.data[y * width + x] = static_cast<uint8_t>(pixel);
+                }
+            }
+        } else if (depth == 32) {
+            img.channels = 4;
+            img.data.resize(width * height * 4);
+
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    l_uint32 pixel;
+                    pixGetPixel(pix, x, y, &pixel);
+
+                    img.data[(y * width + x) * 4 + 0] = pixel & 0xFF;         // R
+                    img.data[(y * width + x) * 4 + 1] = (pixel >> 8) & 0xFF;  // G
+                    img.data[(y * width + x) * 4 + 2] = (pixel >> 16) & 0xFF; // B
+                    img.data[(y * width + x) * 4 + 3] = (pixel >> 24) & 0xFF; // A
+                }
+            }
+        } else {
+            throw std::runtime_error("Unsupported Pix depth");
+        }
+
+        return img;
+    }
+
+
 
     cv::Mat Converter::ImageToMat(const Image &image) {
         if (image.data.empty() || image.width <= 0 || image.height <= 0 || image.channels <= 0) {
@@ -87,30 +176,61 @@ namespace LibGraphics::Utils {
                 cvType = CV_8UC4;
                 break;
             default:
-                throw std::runtime_error("Unsupported number of channels: " + std::to_string(image.channels));
+                throw std::runtime_error(
+                    "LibScreenshot::ImageToMat - unsupported channel count: " + std::to_string(image.channels));
         }
 
+        // Wrap raw data into a Mat header (no copy yet)
         cv::Mat mat(image.height, image.width, cvType, const_cast<uint8_t *>(image.data.data()));
 
+        // Convert RGB to BGR if needed
+        if (image.channels == 3) {
+            cv::Mat converted;
+            cv::cvtColor(mat, converted, cv::COLOR_RGB2BGR);
+            return converted;
+        }
+
+        // Clone to ensure memory safety for 1 or 4 channels
         return mat.clone();
     }
 
     Image Converter::MatToImage(const cv::Mat &mat) {
-        Image img;
-
         if (mat.empty()) {
-            throw std::runtime_error("Cannot convert empty cv::Mat to Image");
+            throw std::runtime_error("LibScreenshot::MatToImage - input Mat is empty");
         }
 
-        img.width = mat.cols;
-        img.height = mat.rows;
-        img.channels = mat.channels();
+        Image image;
+        image.width = mat.cols;
+        image.height = mat.rows;
+        image.channels = mat.channels();
 
-        cv::Mat continuous = mat.isContinuous() ? mat : mat.clone();
+        cv::Mat converted;
 
-        size_t dataSize = static_cast<size_t>(img.width) * img.height * img.channels;
-        img.data.assign(continuous.data, continuous.data + dataSize);
+        switch (mat.channels()) {
+            case 1: {
+                // Grayscale — clone if non-continuous
+                converted = mat.isContinuous() ? mat : mat.clone();
+                break;
+            }
+            case 3: {
+                // BGR → RGB — clone before conversion if needed
+                cv::Mat temp = mat.isContinuous() ? mat : mat.clone();
+                cv::cvtColor(temp, converted, cv::COLOR_BGR2RGB);
+                break;
+            }
+            case 4: {
+                // BGRA → RGBA — clone before conversion if needed
+                cv::Mat temp = mat.isContinuous() ? mat : mat.clone();
+                cv::cvtColor(temp, converted, cv::COLOR_BGRA2RGBA);
+                break;
+            }
+            default:
+                throw std::runtime_error("LibScreenshot::MatToImage - unsupported format: " +
+                                         std::to_string(mat.cols) + "x" + std::to_string(mat.rows) +
+                                         ", type=" + std::to_string(mat.type()));
+        }
 
-        return img;
+        image.data.assign(converted.data, converted.data + converted.total() * converted.elemSize());
+        return image;
     }
 }

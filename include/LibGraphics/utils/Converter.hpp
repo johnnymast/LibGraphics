@@ -11,6 +11,7 @@ namespace LibGraphics::Utils {
     public:
         static cv::Mat ImageToMat(const Image &image);
         static Image MatToImage(const cv::Mat &mat);
-        static Pix *imageToPix(const Image &image);
+        static Pix *imageToPix(Image &image);
+        static Image pixToImage(Pix *pix);
     };
 };

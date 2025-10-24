@@ -1,7 +1,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "../include/LibGraphics/Image.hpp"
+#include "LibGraphics/Image.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <stdexcept>
@@ -76,5 +76,10 @@ namespace LibGraphics {
         img.data.assign(continuous.data, continuous.data + dataSize);
 
         return img;
+    }
+
+    Image Image::clone() const {
+        Image copy = *this;
+        return copy;
     }
 }
