@@ -43,6 +43,7 @@ set(DISABLED_LEGACY_ENGINE OFF CACHE BOOL "" FORCE)
 # Make available
 message(STATUS "Fetching Leptonica...")
 FetchContent_GetProperties(leptonica)
+
 if (NOT leptonica_POPULATED)
     FetchContent_Populate(leptonica)
 

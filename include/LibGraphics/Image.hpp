@@ -14,13 +14,18 @@ namespace LibGraphics {
         int width = 0;
         int height = 0;
         int channels = 0;
+        Image() = default;
+        Image(int width, int height, int channels, std::vector<uint8_t> pixels);
 
         static Image load(const std::string &path);
-        bool save(const std::string &path, int quality = 90) const;
+        static Image load_from_memory(const uint8_t* buffer, size_t size);
+        static Image load_from_memory(const std::vector<uint8_t>& buffer);
+
+        [[nodiscard]] bool save(const std::string &path, int quality = 90) const;
         void show() const;
 
-        Image crop(int x, int y, int width, int height) const;
-        Image clone() const;
+        [[nodiscard]] Image crop(int x, int y, int width, int height) const;
+        [[nodiscard]] Image clone() const;
 
 
     private:
