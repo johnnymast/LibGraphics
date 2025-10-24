@@ -15,6 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential pkg-config libopencv-dev libleptonica-dev tesseract-ocr libtesseract-dev
+
       - name: Debug Tesseract setup
         run: |
           echo "Tesseract version:"
@@ -25,11 +30,6 @@ jobs:
           ls /usr/share/tesseract-ocr/4.00/tessdata || true
           ls /usr/share/tesseract-ocr/tessdata || true
           ls /usr/share/tessdata || true
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake build-essential pkg-config libopencv-dev libleptonica-dev tesseract-ocr libtesseract-dev
 
       - name: Configure
         run: |
