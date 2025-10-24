@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TESSDATA_PREFIX: /usr/share/tesseract-ocr/4.00/tessdata/
+      TESSDATA_PREFIX: /usr/share/tesseract-ocr/5/tessdata
 
     steps:
       - name: Checkout
