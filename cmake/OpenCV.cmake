@@ -5,5 +5,3 @@ elseif(UNIX)
     pkg_check_modules(OpenCV REQUIRED opencv4)
 endif()
 
-find_package(OpenCV REQUIRED)
-

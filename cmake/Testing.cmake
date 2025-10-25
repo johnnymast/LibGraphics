@@ -1,4 +1,5 @@
 include(FetchContent)
+
 # Catch2 v3
 FetchContent_Declare(
         Catch2
@@ -9,9 +10,9 @@ FetchContent_MakeAvailable(Catch2)
 
 enable_testing()
 
-add_executable(test_color
+add_executable(graphics_testsuite
         tests/color/Color.test.cpp
-#        tests/color/BackgroundScanner.test.cpp
+        tests/color/BackgroundScanner.test.cpp
         tests/color/BackgroundScanner.wrappers.test.cpp
         tests/match/Region.test.cpp
         tests/match/MatchResult.test.cpp
@@ -21,21 +22,21 @@ add_executable(test_color
         tests/image.test.cpp
 )
 
-# Link your library (provides helpers::Color) and Catch2's main
-target_link_libraries(test_color
+# Include paths for tests
+target_include_directories(graphics_testsuite
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+# Link dependencies
+target_link_libraries(graphics_testsuite
         PRIVATE
         LibGraphics
         Catch2::Catch2WithMain
 )
 
-# Tests may include headers from src and include
-target_include_directories(test_color PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
 # Register tests
 include(CTest)
 include(Catch)
-
-catch_discover_tests(test_color)
+catch_discover_tests(graphics_testsuite)

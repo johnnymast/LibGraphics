@@ -1,8 +1,9 @@
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "LibGraphics/utils/Converter.hpp"
 #include "LibGraphics/Image.hpp"
+
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include <opencv2/opencv.hpp>
 

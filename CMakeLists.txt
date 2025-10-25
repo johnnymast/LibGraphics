@@ -4,34 +4,11 @@ project(LibGraphics VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
-include(Version)
-include(Tesseract)
-include(OpenCV)
 
 add_library(${PROJECT_NAME} SHARED
         include/modules/stb_image.h
         include/modules/stb_image_write.h
-
-        src/opencv_info.cpp
-
-        src/ocr/OcrTextReader.cpp
-
-        src/match/TemplateMatcher.cpp
-        src/match/Region.cpp
-        src/match/MatchResult.cpp
-
-        src/color/Information.cpp
-        src/color/BackgroundScanner.cpp
-
-
-        src/utils/Converter.cpp
-
-        src/LibGraphics.cpp
-        src/Image.cpp
-
         include/LibGraphics/exceptions/LowConfidenceException.hpp
 
         include/LibGraphics/ocr/OcrTextReader.hpp
@@ -49,7 +26,29 @@ add_library(${PROJECT_NAME} SHARED
 
         include/LibGraphics/Image.hpp
         include/LibGraphics.hpp
+
+
+        src/opencv_info.cpp
+
+        src/ocr/OcrTextReader.cpp
+
+        src/match/TemplateMatcher.cpp
+        src/match/Region.cpp
+        src/match/MatchResult.cpp
+
+        src/color/Information.cpp
+        src/color/BackgroundScanner.cpp
+
+        src/utils/Converter.cpp
+
+        src/LibGraphics.cpp
+        src/Image.cpp
 )
+
+
+include(Version)
+include(OpenCV)
+include(Tesseract)
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC
@@ -61,7 +60,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC
-        ${OpenCV_LIBS}
+        ${OpenCV_LINK_LIBRARIES}
         PRIVATE
         Tesseract::Tesseract
         leptonica
@@ -70,11 +69,11 @@ target_link_libraries(${PROJECT_NAME}
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBGRAPHICS_EXPORTS)
 
-
 set_target_properties(${PROJECT_NAME} PROPERTIES
         OUTPUT_NAME "${PROJECT_NAME}"
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
 )
+
 
 include(Testing)
