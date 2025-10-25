@@ -29,12 +29,21 @@ target_include_directories(graphics_testsuite
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+target_include_directories(graphics_testsuite
+        PRIVATE
+        ${OpenCV_INCLUDE_DIRS}
+)
+
+
 # Link dependencies
 target_link_libraries(graphics_testsuite
         PRIVATE
-        LibGraphics
+        Graphics
         Catch2::Catch2WithMain
+        ${OpenCV_LIBS}
 )
+
+
 
 # Register tests
 include(CTest)

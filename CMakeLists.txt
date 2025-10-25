@@ -4,6 +4,10 @@ project(Graphics VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(LIBGRAPHICS_ENABLE_TESTS "Build LibGraphics test suite" ON)
+
+
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_library(${PROJECT_NAME} SHARED
@@ -75,5 +79,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         SOVERSION 1
 )
 
-
-include(Testing)
+if(LIBGRAPHICS_ENABLE_TESTS)
+    include(Testing)
+endif()
