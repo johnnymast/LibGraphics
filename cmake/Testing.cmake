@@ -38,7 +38,7 @@ target_include_directories(graphics_testsuite
 # Link dependencies
 target_link_libraries(graphics_testsuite
         PRIVATE
-        Graphics
+        LibGraphics
         Catch2::Catch2WithMain
         ${OpenCV_LIBS}
 )
