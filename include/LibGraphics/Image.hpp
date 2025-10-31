@@ -24,6 +24,8 @@ namespace LibGraphics {
         [[nodiscard]] bool save(const std::string &path, int quality = 90) const;
         void show() const;
 
+        Image toGrayscale() const;
+
         [[nodiscard]] Image crop(int x, int y, int width, int height) const;
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] Image clone() const;

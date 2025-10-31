@@ -138,6 +138,41 @@ namespace LibGraphics {
         }
     }
 
+    /**
+     * Convert the image to grayscale and return a new 1-channel image.
+     * If the source already has a single channel, returns a clone.
+     * The resulting image uses 8 bits per pixel (grayscale).
+     */
+    Image Image::toGrayscale() const {
+        // Basic validation
+        if (width <= 0 || height <= 0 || data.empty()) {
+            return Image();
+        }
+
+        // If already grayscale, return a clone
+        if (channels == 1) {
+            return clone();
+        }
+
+        // Allocate grayscale data: width * height, 1 channel
+        std::vector<uint8_t> grayData;
+        grayData.resize(static_cast<size_t>(width) * height);
+
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                size_t srcIdx = (static_cast<size_t>(y) * width + x) * channels;
+                uint8_t r = data[srcIdx + 0];
+                uint8_t g = data[srcIdx + 1];
+                uint8_t b = data[srcIdx + 2];
+                // Rec. 601 luma: 0.299*R + 0.587*G + 0.114*B
+                uint8_t gray = static_cast<uint8_t>(static_cast<int>(0.299 * r + 0.587 * g + 0.114 * b));
+                grayData[y * width + x] = gray;
+            }
+        }
+
+        return Image(width, height, 1, std::move(grayData));
+    }
+
 
     Image Image::load_from_memory(const uint8_t *buffer, const size_t size) {
         int w = 0, h = 0, c = 0;

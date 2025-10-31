@@ -157,3 +157,38 @@ TEST_CASE("Image::isValid false for data size mismatch", "[Image][isValid]") {
     img.data.resize(47); // now size does not match width*height*channels
     REQUIRE_FALSE(img.isValid());
 }
+
+TEST_CASE("Image::toGrayscale converts RGB to grayscale correctly", "[Image][toGrayscale]") {
+    // Prepare a 2x2 RGB image with known pixel values
+    // Pixel order: row-major, each pixel is R,G,B
+    // Pixel 0: (10, 20, 30)
+    // Pixel 1: (40, 50, 60)
+    // Pixel 2: (7, 7, 7)
+    // Pixel 3: (255, 0, 0)
+    std::vector<uint8_t> data = {
+        10, 20, 30,
+        40, 50, 60,
+        7,  7,  7,
+        255, 0, 0
+    };
+
+    Image src(2, 2, 3, std::move(data));
+
+    Image gray = src.toGrayscale();
+
+    REQUIRE(gray.width == 2);
+    REQUIRE(gray.height == 2);
+    REQUIRE(gray.channels == 1);
+    REQUIRE(gray.data.size() == static_cast<size_t>(2) * 2);
+
+    // Expected grayscale values (rounded to nearest integer):
+    // Pixel 0: 0.299*10 + 0.587*20 + 0.114*30 = 18.15 -> 18
+    // Pixel 1: 0.299*40 + 0.587*50 + 0.114*60 = 48.15 -> 48
+    // Pixel 2: 0.299*7  + 0.587*7  + 0.114*7  = 7.0   -> 7
+    // Pixel 3: 0.299*255+0.587*0  + 0.114*0  = 76.245 -> 76
+
+    REQUIRE(gray.data[0] == 18);
+    REQUIRE(gray.data[1] == 48);
+    REQUIRE(gray.data[2] == 7);
+    REQUIRE(gray.data[3] == 76);
+}
