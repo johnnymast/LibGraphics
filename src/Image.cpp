@@ -20,7 +20,7 @@ namespace LibGraphics {
     //     data = std::move(pixels);
     // }
 
-    Image::Image(int width, int height, int channels, std::vector<uint8_t> pixels)
+    Image::Image(const int width, const int height, int channels, std::vector<uint8_t> pixels)
            : width(width), height(height), channels(channels) {
         if (width <= 0 || height <= 0 || channels <= 0) {
             throw std::invalid_argument("[Image] Invalid dimensions or channel count");
@@ -139,7 +139,7 @@ namespace LibGraphics {
     }
 
 
-    Image Image::load_from_memory(const uint8_t *buffer, size_t size) {
+    Image Image::load_from_memory(const uint8_t *buffer, const size_t size) {
         int w = 0, h = 0, c = 0;
         stbi_uc *pixels = stbi_load_from_memory(buffer, static_cast<int>(size), &w, &h, &c, 0);
 
