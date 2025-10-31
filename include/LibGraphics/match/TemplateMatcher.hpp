@@ -10,15 +10,15 @@ namespace LibGraphics::Match {
     public:
         // Find single best match in target image
         static MatchResult matchTemplateSingle(
-            const Image& query,
-            const Image& target,
+            const Image& match_template,
+            const Image& match_target,
             const MatchOptions& options = MatchOptions()
         );
 
         // Find all occurrences of template in target image above confidence threshold
         static std::vector<MatchResult> matchTemplateMultiple(
-            const Image& query,
-            const Image& target,
+            const Image& match_template,
+            const Image& match_target,
             const MatchOptions& options = MatchOptions()
         );
     };

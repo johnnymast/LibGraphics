@@ -61,24 +61,24 @@ static void ensureCompatibleFormats(cv::Mat& query, cv::Mat& target) {
 
 // Main implementation with options
 MatchResult TemplateMatcher::matchTemplateSingle(
-    const Image& query,
-    const Image& target,
+    const Image& match_template,
+    const Image& match_target,
     const MatchOptions& options
 ) {
-    cv::Mat queryMat = Converter::ImageToMat(query);
-    cv::Mat targetMat = Converter::ImageToMat(target);
+    cv::Mat templateMat = Converter::ImageToMat(match_template);
+    cv::Mat targetMat = Converter::ImageToMat(match_target);
 
     // Ensure compatible formats
-    ensureCompatibleFormats(queryMat, targetMat);
+    ensureCompatibleFormats(templateMat, targetMat);
 
     cv::Mat result;
 
-    if (targetMat.cols < queryMat.cols || targetMat.rows < queryMat.rows) {
+    if (targetMat.cols < templateMat.cols || targetMat.rows < templateMat.rows) {
         throw std::runtime_error("Target image is smaller than query image.");
     }
 
     int matchMethod = options.getMethod();
-    cv::matchTemplate(targetMat, queryMat, result, matchMethod);
+    cv::matchTemplate(targetMat, templateMat, result, matchMethod);
     double minVal, maxVal;
     cv::Point minLoc, maxLoc;
     cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
@@ -98,30 +98,30 @@ MatchResult TemplateMatcher::matchTemplateSingle(
         }
     }
 
-    return MatchResult(matchLoc.x, matchLoc.y, queryMat.cols, queryMat.rows, score);
+    return MatchResult(matchLoc.x, matchLoc.y, templateMat.cols, templateMat.rows, score);
 }
 
 // Find all occurrences above threshold
 std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
-    const Image& query,
-    const Image& target,
+    const Image& match_template,
+    const Image& match_target,
     const MatchOptions& options
 ) {
     std::vector<MatchResult> results;
-    cv::Mat queryMat = Converter::ImageToMat(query);
-    cv::Mat targetMat = Converter::ImageToMat(target);
+    cv::Mat templateMat = Converter::ImageToMat(match_template);
+    cv::Mat targetMat = Converter::ImageToMat(match_target);
 
     // Ensure compatible formats
-    ensureCompatibleFormats(queryMat, targetMat);
+    ensureCompatibleFormats(templateMat, targetMat);
 
     cv::Mat result;
 
-    if (targetMat.cols < queryMat.cols || targetMat.rows < queryMat.rows) {
+    if (targetMat.cols < templateMat.cols || targetMat.rows < templateMat.rows) {
         throw std::runtime_error("Target image is smaller than query image.");
     }
 
     int matchMethod = options.getMethod();
-    cv::matchTemplate(targetMat, queryMat, result, matchMethod);
+    cv::matchTemplate(targetMat, templateMat, result, matchMethod);
 
     // For SQDIFF methods, good matches have low values
     bool invertThreshold = (matchMethod == cv::TM_SQDIFF || matchMethod == cv::TM_SQDIFF_NORMED);
@@ -138,12 +138,12 @@ std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
         double score = invertThreshold ? minVal : maxVal;
         cv::Point matchLoc = invertThreshold ? minLoc : maxLoc;
 
-        results.push_back(MatchResult(matchLoc.x, matchLoc.y, queryMat.cols, queryMat.rows, score));
+        results.push_back(MatchResult(matchLoc.x, matchLoc.y, templateMat.cols, templateMat.rows, score));
         return results;
     }
 
     // Find all matches above threshold with non-maximum suppression
-    int windowSize = std::max(queryMat.cols, queryMat.rows) / 4; // Suppression window
+    int windowSize = std::max(templateMat.cols, templateMat.rows) / 4; // Suppression window
 
     // Create a copy for marking processed areas
     cv::Mat resultCopy = result.clone();
@@ -164,7 +164,7 @@ std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
         }
 
         // Add this match
-        results.push_back(MatchResult(matchLoc.x, matchLoc.y, queryMat.cols, queryMat.rows, score));
+        results.push_back(MatchResult(matchLoc.x, matchLoc.y, templateMat.cols, templateMat.rows, score));
 
         // Suppress nearby matches to avoid duplicates
         int x1 = std::max(0, matchLoc.x - windowSize);
