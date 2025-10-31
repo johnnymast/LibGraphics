@@ -9,9 +9,19 @@
 #include <stdexcept>
 
 namespace LibGraphics {
+    // Image::Image(int width, int height, int channels, std::vector<uint8_t> pixels)
+    //     : width(width), height(height), channels(channels) {
+    //     if (width <= 0 || height <= 0 || channels <= 0) {
+    //         throw std::invalid_argument("[Image] Invalid dimensions or channel count");
+    //     }
+    //     if (pixels.size() != static_cast<size_t>(width * height * channels)) {
+    //         throw std::invalid_argument("[Image] Pixel buffer size does not match dimensions");
+    //     }
+    //     data = std::move(pixels);
+    // }
 
     Image::Image(int width, int height, int channels, std::vector<uint8_t> pixels)
-        : width(width), height(height), channels(channels) {
+           : width(width), height(height), channels(channels) {
         if (width <= 0 || height <= 0 || channels <= 0) {
             throw std::invalid_argument("[Image] Invalid dimensions or channel count");
         }
@@ -21,11 +31,12 @@ namespace LibGraphics {
         data = std::move(pixels);
     }
 
-    Image Image::load(const std::string& path) {
+
+    Image Image::load(const std::string &path) {
         Image img;
 
         int width, height, channels;
-        unsigned char* imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!imageData) {
             throw std::runtime_error("Failed to load image: " + path);
@@ -43,7 +54,7 @@ namespace LibGraphics {
         return img;
     }
 
-    bool Image::save(const std::string& path, int quality) const {
+    bool Image::save(const std::string &path, int quality) const {
         if (data.empty() || width <= 0 || height <= 0 || channels <= 0) {
             return false;
         }
@@ -128,9 +139,9 @@ namespace LibGraphics {
     }
 
 
-    Image Image::load_from_memory(const uint8_t* buffer, size_t size) {
+    Image Image::load_from_memory(const uint8_t *buffer, size_t size) {
         int w = 0, h = 0, c = 0;
-        stbi_uc* pixels = stbi_load_from_memory(buffer, static_cast<int>(size), &w, &h, &c, 0);
+        stbi_uc *pixels = stbi_load_from_memory(buffer, static_cast<int>(size), &w, &h, &c, 0);
 
         if (!pixels) {
             throw std::runtime_error("[Image::load_from_memory] Failed to decode image from memory");
@@ -142,8 +153,14 @@ namespace LibGraphics {
         return Image(w, h, c, std::move(data));
     }
 
-    Image Image::load_from_memory(const std::vector<uint8_t>& buffer) {
+    Image Image::load_from_memory(const std::vector<uint8_t> &buffer) {
         return load_from_memory(buffer.data(), buffer.size());
+    }
+
+    bool Image::isValid() const {
+        if (width == 0 || height == 0 || channels == 0) return false;
+        const size_t expected = static_cast<size_t>(width) * static_cast<size_t>(height) * static_cast<size_t>(channels);
+        return data.size() == expected;
     }
 
     Image Image::clone() const {

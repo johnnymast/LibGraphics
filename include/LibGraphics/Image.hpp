@@ -25,7 +25,9 @@ namespace LibGraphics {
         void show() const;
 
         [[nodiscard]] Image crop(int x, int y, int width, int height) const;
+        [[nodiscard]] bool isValid() const;
         [[nodiscard]] Image clone() const;
+
 
 
     private:

@@ -144,3 +144,16 @@ TEST_CASE("Image constructor accepts valid buffer", "[image][constructor]") {
     REQUIRE(img.channels == c);
     REQUIRE(img.data.size() == w * h * c);
 }
+
+TEST_CASE("Image constructor with invalid buffer size throws", "[Image][constructor]") {
+    int w = 4, h = 4, c = 3;
+    std::vector<uint8_t> bad_data(w * h * c - 1); // too small
+    REQUIRE_THROWS_AS(Image(w, h, c, std::move(bad_data)), std::invalid_argument);
+}
+
+TEST_CASE("Image::isValid false for data size mismatch", "[Image][isValid]") {
+    // Create a valid image first, then corrupt the buffer size.
+    Image img(4, 4, 3, std::vector<uint8_t>(48, 0)); // valid size: 4*4*3 = 48
+    img.data.resize(47); // now size does not match width*height*channels
+    REQUIRE_FALSE(img.isValid());
+}
