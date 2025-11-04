@@ -3,8 +3,6 @@
 #include "LibGraphics/Image.hpp"
 #include "OcrResult.hpp"
 
-using LibGraphics::Image;
-
 namespace LibGraphics::Ocr {
     class OcrTextReader {
     public:
