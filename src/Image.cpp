@@ -103,7 +103,7 @@ namespace LibGraphics {
             }
         }
 
-        result.identifier = identifier;
+        result.origin = origin;
 
         return result;
     }
