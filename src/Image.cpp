@@ -28,6 +28,8 @@ namespace LibGraphics {
         if (pixels.size() != static_cast<size_t>(width * height * channels)) {
             throw std::invalid_argument("[Image] Pixel buffer size does not match dimensions");
         }
+
+        origin = "buffer";
         data = std::move(pixels);
     }
 
@@ -45,6 +47,7 @@ namespace LibGraphics {
         img.width = width;
         img.height = height;
         img.channels = channels;
+        img.origin = path;
 
         size_t dataSize = static_cast<size_t>(width) * height * channels;
         img.data.assign(imageData, imageData + dataSize);
@@ -54,7 +57,7 @@ namespace LibGraphics {
         return img;
     }
 
-    bool Image::save(const std::string &path, int quality) const {
+    bool Image::save(const std::string &path, const int quality) const {
         if (data.empty() || width <= 0 || height <= 0 || channels <= 0) {
             return false;
         }
@@ -77,7 +80,7 @@ namespace LibGraphics {
         return result != 0;
     }
 
-    Image Image::crop(int x, int y, int width, int height) const {
+    Image Image::crop(const int x, const int y, int width, int height) const {
         // Validate bounds
         if (x < 0 || y < 0 || x + width > this->width || y + height > this->height) {
             std::cerr << "[Image::crop] Invalid crop region\n";
@@ -99,6 +102,8 @@ namespace LibGraphics {
                 }
             }
         }
+
+        result.identifier = identifier;
 
         return result;
     }
@@ -170,7 +175,11 @@ namespace LibGraphics {
             }
         }
 
-        return Image(width, height, 1, std::move(grayData));
+        auto clone = Image(width, height, 1, std::move(grayData));
+
+        clone.origin = origin;
+
+        return clone;
     }
 
 
@@ -185,7 +194,11 @@ namespace LibGraphics {
         std::vector<uint8_t> data(pixels, pixels + (w * h * c));
         stbi_image_free(pixels);
 
-        return Image(w, h, c, std::move(data));
+        auto clone = Image(w, h, c, std::move(data));
+
+        clone.origin = "memory";
+
+        return clone;
     }
 
     Image Image::load_from_memory(const std::vector<uint8_t> &buffer) {

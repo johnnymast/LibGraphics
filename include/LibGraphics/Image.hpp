@@ -14,6 +14,8 @@ namespace LibGraphics {
         int width = 0;
         int height = 0;
         int channels = 0;
+        std::string origin = "empty";
+
         Image() = default;
         Image(int width, int height, int channels, std::vector<uint8_t> pixels);
 
