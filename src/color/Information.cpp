@@ -1,5 +1,7 @@
 #include "../include/LibGraphics/color/Information.hpp"
 
+#include <algorithm>
+
 namespace LibGraphics::Color {
     bool Information::is_greenish(int r, int g, int b, int buffer) {
         constexpr int target_r = 71;
@@ -12,6 +14,10 @@ namespace LibGraphics::Color {
     }
 
     bool Information::is_white(int r, int g, int b, int threshold) {
-        return r >= threshold && g >= threshold && b >= threshold;
+        int brightness = (r + g + b) / 3;
+        int min_component = std::min({r, g, b});
+        // Strenger: elk kanaal moet in de buurt van wit zijn
+        return brightness >= threshold && min_component >= threshold;
     }
+
 }

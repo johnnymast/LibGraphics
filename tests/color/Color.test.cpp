@@ -24,40 +24,35 @@ TEST_CASE("Color greenish checks") {
     }
 }
 
-#include "LibGraphics.hpp"
-
-#include <catch2/catch_test_macros.hpp>
-
-using LibGraphics::Color::Information;
-
-TEST_CASE("Color white checks") {
+TEST_CASE("Color white checks - brightness + min component") {
     SECTION("ExactMatchIsWhite") {
         REQUIRE(Information::is_white(255, 255, 255));
     }
 
     SECTION("WithinThresholdIsWhite") {
-        REQUIRE(Information::is_white(230, 230, 230));
-        REQUIRE(Information::is_white(240, 240, 240));
-        REQUIRE(Information::is_white(250, 250, 250));
+        REQUIRE(Information::is_white(230, 230, 230)); // brightness = 230, min = 230
+        REQUIRE(Information::is_white(240, 240, 240)); // brightness = 240, min = 240
+        REQUIRE(Information::is_white(250, 250, 250)); // brightness = 250, min = 250
     }
 
     SECTION("BelowThresholdIsNotWhite") {
-        REQUIRE_FALSE(Information::is_white(229, 229, 229));
-        REQUIRE_FALSE(Information::is_white(200, 200, 200));
-        REQUIRE_FALSE(Information::is_white(128, 128, 128));
-        REQUIRE_FALSE(Information::is_white(0, 0, 0));
+        REQUIRE_FALSE(Information::is_white(229, 229, 229)); // brightness = 229, min = 229
+        REQUIRE_FALSE(Information::is_white(200, 200, 200)); // brightness = 200
+        REQUIRE_FALSE(Information::is_white(128, 128, 128)); // too dark
+        REQUIRE_FALSE(Information::is_white(0, 0, 0));       // black
     }
 
     SECTION("OneComponentBelowThresholdIsNotWhite") {
-        REQUIRE_FALSE(Information::is_white(229, 255, 255));
-        REQUIRE_FALSE(Information::is_white(255, 229, 255));
-        REQUIRE_FALSE(Information::is_white(255, 255, 229));
+        REQUIRE_FALSE(Information::is_white(229, 255, 255)); // min = 229 < 230
+        REQUIRE_FALSE(Information::is_white(255, 229, 255)); // min = 229 < 230
+        REQUIRE_FALSE(Information::is_white(255, 255, 229)); // min = 229 < 230
     }
 
+
     SECTION("CustomThresholdWorks") {
-        REQUIRE(Information::is_white(250, 250, 250, 245));
-        REQUIRE(Information::is_white(245, 245, 245, 245));
-        REQUIRE_FALSE(Information::is_white(244, 244, 244, 245));
-        REQUIRE_FALSE(Information::is_white(230, 230, 230, 245));
+        REQUIRE(Information::is_white(250, 250, 250, 245)); // brightness = 250, min = 250
+        REQUIRE(Information::is_white(245, 245, 245, 245)); // brightness = 245, min = 245
+        REQUIRE_FALSE(Information::is_white(244, 244, 244, 245)); // brightness = 244
+        REQUIRE_FALSE(Information::is_white(230, 230, 230, 245)); // brightness = 230
     }
 }
