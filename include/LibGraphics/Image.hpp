@@ -28,6 +28,9 @@ namespace LibGraphics {
 
         Image toGrayscale() const;
 
+        [[nodiscard]] std::array<uint8_t, 3> getRGB(int x, int y) const;
+
+
         [[nodiscard]] Image crop(int x, int y, int width, int height) const;
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] Image clone() const;

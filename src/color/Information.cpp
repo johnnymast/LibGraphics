@@ -10,4 +10,8 @@ namespace LibGraphics::Color {
                (g >= target_g - buffer && g <= target_g + buffer) &&
                (b >= target_b - buffer && b <= target_b + buffer);
     }
+
+    bool Information::is_white(int r, int g, int b, int threshold) {
+        return r >= threshold && g >= threshold && b >= threshold;
+    }
 }

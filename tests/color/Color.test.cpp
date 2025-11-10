@@ -23,3 +23,41 @@ TEST_CASE("Color greenish checks") {
         REQUIRE_FALSE(Information::is_greenish(100, 170, 140, 10));
     }
 }
+
+#include "LibGraphics.hpp"
+
+#include <catch2/catch_test_macros.hpp>
+
+using LibGraphics::Color::Information;
+
+TEST_CASE("Color white checks") {
+    SECTION("ExactMatchIsWhite") {
+        REQUIRE(Information::is_white(255, 255, 255));
+    }
+
+    SECTION("WithinThresholdIsWhite") {
+        REQUIRE(Information::is_white(230, 230, 230));
+        REQUIRE(Information::is_white(240, 240, 240));
+        REQUIRE(Information::is_white(250, 250, 250));
+    }
+
+    SECTION("BelowThresholdIsNotWhite") {
+        REQUIRE_FALSE(Information::is_white(229, 229, 229));
+        REQUIRE_FALSE(Information::is_white(200, 200, 200));
+        REQUIRE_FALSE(Information::is_white(128, 128, 128));
+        REQUIRE_FALSE(Information::is_white(0, 0, 0));
+    }
+
+    SECTION("OneComponentBelowThresholdIsNotWhite") {
+        REQUIRE_FALSE(Information::is_white(229, 255, 255));
+        REQUIRE_FALSE(Information::is_white(255, 229, 255));
+        REQUIRE_FALSE(Information::is_white(255, 255, 229));
+    }
+
+    SECTION("CustomThresholdWorks") {
+        REQUIRE(Information::is_white(250, 250, 250, 245));
+        REQUIRE(Information::is_white(245, 245, 245, 245));
+        REQUIRE_FALSE(Information::is_white(244, 244, 244, 245));
+        REQUIRE_FALSE(Information::is_white(230, 230, 230, 245));
+    }
+}

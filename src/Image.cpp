@@ -215,4 +215,36 @@ namespace LibGraphics {
         Image copy = *this;
         return copy;
     }
+
+    std::array<uint8_t, 3> Image::getRGB(int x, int y) const {
+        // Validate coordinates
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            throw std::out_of_range("[Image::getRGB] Coordinates out of bounds");
+        }
+
+        if (!isValid()) {
+            throw std::runtime_error("[Image::getRGB] Invalid image");
+        }
+
+        // Calculate the index in the data array
+        size_t index = (static_cast<size_t>(y) * width + x) * channels;
+
+        std::array<uint8_t, 3> rgb;
+
+        if (channels == 1) {
+            // Grayscale: return same value for R, G, B
+            uint8_t gray = data[index];
+            rgb = {gray, gray, gray};
+        } else if (channels == 3) {
+            // RGB: return R, G, B
+            rgb = {data[index], data[index + 1], data[index + 2]};
+        } else if (channels == 4) {
+            // RGBA: return R, G, B (ignore alpha)
+            rgb = {data[index], data[index + 1], data[index + 2]};
+        } else {
+            throw std::runtime_error("[Image::getRGB] Unsupported channel count");
+        }
+
+        return rgb;
+    }
 }
