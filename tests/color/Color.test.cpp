@@ -24,35 +24,45 @@ TEST_CASE("Color greenish checks") {
     }
 }
 
-TEST_CASE("Color white checks - brightness + min component") {
+TEST_CASE("Color white checks - brightness + min component + chroma") {
     SECTION("ExactMatchIsWhite") {
-        REQUIRE(Information::is_white(255, 255, 255));
+        REQUIRE(Information::is_white(255, 255, 255)); // puur wit
     }
 
     SECTION("WithinThresholdIsWhite") {
-        REQUIRE(Information::is_white(230, 230, 230)); // brightness = 230, min = 230
-        REQUIRE(Information::is_white(240, 240, 240)); // brightness = 240, min = 240
-        REQUIRE(Information::is_white(250, 250, 250)); // brightness = 250, min = 250
+        REQUIRE(Information::is_white(230, 230, 230)); // lichtgrijs
+        REQUIRE(Information::is_white(240, 240, 240)); // lichtgrijs
+        REQUIRE(Information::is_white(250, 250, 250)); // bijna puur wit
+        REQUIRE(Information::is_white(222, 222, 222)); // jouw voorbeeld witte tekst
     }
 
     SECTION("BelowThresholdIsNotWhite") {
-        REQUIRE_FALSE(Information::is_white(229, 229, 229)); // brightness = 229, min = 229
-        REQUIRE_FALSE(Information::is_white(200, 200, 200)); // brightness = 200
-        REQUIRE_FALSE(Information::is_white(128, 128, 128)); // too dark
-        REQUIRE_FALSE(Information::is_white(0, 0, 0));       // black
+        REQUIRE_FALSE(Information::is_white(200, 200, 200)); // donkergrijs
+        REQUIRE_FALSE(Information::is_white(128, 128, 128)); // donker
+        REQUIRE_FALSE(Information::is_white(0, 0, 0));       // zwart
+        REQUIRE_FALSE(Information::is_white(128, 148, 155)); // Davie (offline)
     }
 
     SECTION("OneComponentBelowThresholdIsNotWhite") {
-        REQUIRE_FALSE(Information::is_white(229, 255, 255)); // min = 229 < 230
-        REQUIRE_FALSE(Information::is_white(255, 229, 255)); // min = 229 < 230
-        REQUIRE_FALSE(Information::is_white(255, 255, 229)); // min = 229 < 230
+        REQUIRE_FALSE(Information::is_white(219, 255, 255)); // min=219 < 220
+        REQUIRE_FALSE(Information::is_white(255, 219, 255)); // min=219 < 220
+        REQUIRE_FALSE(Information::is_white(255, 255, 219)); // min=219 < 220
     }
-
 
     SECTION("CustomThresholdWorks") {
-        REQUIRE(Information::is_white(250, 250, 250, 245)); // brightness = 250, min = 250
-        REQUIRE(Information::is_white(245, 245, 245, 245)); // brightness = 245, min = 245
-        REQUIRE_FALSE(Information::is_white(244, 244, 244, 245)); // brightness = 244
-        REQUIRE_FALSE(Information::is_white(230, 230, 230, 245)); // brightness = 230
+        REQUIRE(Information::is_white(250, 250, 250, 245)); // brightness=250, min=250
+        REQUIRE(Information::is_white(245, 245, 245, 245)); // brightness=245, min=245
+        REQUIRE_FALSE(Information::is_white(244, 244, 244, 245)); // brightness=244 < 245
+        REQUIRE_FALSE(Information::is_white(230, 230, 230, 245)); // brightness=230 < 245
+    }
+
+    SECTION("ChromaDifferenceBlocksNonWhiteColors") {
+        REQUIRE_FALSE(Information::is_white(255, 200, 200)); // te roodachtig
+        REQUIRE_FALSE(Information::is_white(200, 255, 200)); // te groenachtig
+        REQUIRE_FALSE(Information::is_white(200, 200, 255)); // te blauwachtig
+        REQUIRE_FALSE(Information::is_white(230, 220, 240)); // lichte kleurzweem, diff > 10
     }
 }
+
+
+

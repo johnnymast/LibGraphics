@@ -25,6 +25,6 @@ namespace LibGraphics::Color {
          * @param threshold Minimum value for each component to be considered white (default: 230)
          * @return true if all RGB components are above the threshold
          */
-        static bool is_white(int r, int g, int b, int threshold = 230);
+        static bool is_white(int r, int g, int b, int threshold = 220);
     };
 }
