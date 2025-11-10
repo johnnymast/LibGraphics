@@ -32,11 +32,9 @@ namespace LibGraphics::Utils {
                 memcpy(pixData + y * wpl * 4, srcRow, image.width);
             }
         } else if (image.channels == 3 || image.channels == 4) {
-            std::cout << "[Converter] Processing as RGB" << (image.channels == 4 ? "A" : "") << " (32 bpp)" <<
-                    std::endl;
+
             pix = pixCreate(image.width, image.height, 32);
             if (!pix) {
-                std::cerr << "[Converter] ERROR: Failed to create RGB Pix" << std::endl;
                 throw std::runtime_error("Failed to create RGB Pix");
             }
 
