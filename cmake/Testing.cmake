@@ -14,9 +14,10 @@ add_executable(graphics_testsuite
         tests/color/Color.test.cpp
         tests/color/BackgroundScanner.test.cpp
         tests/color/BackgroundScanner.wrappers.test.cpp
-        tests/match/Region.test.cpp
         tests/match/MatchResult.test.cpp
         tests/match/TemplateMatcher.test.cpp
+        tests/type/Region.test.cpp
+        tests/type/Rect.test.cpp
         tests/utils/Converter.test.cpp
         tests/ocr/OcrTextReader.test.cpp
         tests/image.test.cpp

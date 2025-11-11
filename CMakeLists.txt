@@ -18,9 +18,12 @@ add_library(${PROJECT_NAME} SHARED
         include/LibGraphics/ocr/OcrResult.hpp
 
         include/LibGraphics/match/TemplateMatcher.hpp
-        include/LibGraphics/match/Region.hpp
+
         include/LibGraphics/match/MatchResult.hpp
         include/LibGraphics/match/MatchOptions.hpp
+
+        include/LibGraphics/type/Region.hpp
+        include/LibGraphics/type/Rect.hpp
 
         include/LibGraphics/color/Information.hpp
         include/LibGraphics/color/BackgroundScanner.hpp
@@ -36,8 +39,10 @@ add_library(${PROJECT_NAME} SHARED
         src/ocr/OcrTextReader.cpp
 
         src/match/TemplateMatcher.cpp
-        src/match/Region.cpp
+
         src/match/MatchResult.cpp
+
+        src/type/Region.cpp
 
         src/color/Information.cpp
         src/color/BackgroundScanner.cpp

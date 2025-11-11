@@ -1,6 +1,6 @@
 #pragma once
 
-namespace LibGraphics::Match {
+namespace LibGraphics::Type {
     class Region {
     public:
         int X = 0;

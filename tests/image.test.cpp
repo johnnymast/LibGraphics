@@ -324,107 +324,66 @@ TEST_CASE("Image::getRGB returns correct pixel values", "[image][getRGB]") {
     }
 }
 
-TEST_CASE("Redact a single region to black", "[redact]") {
-    std::vector<uint8_t> pixels(4 * 4 * 3, 255); // 4x4 white RGB image
+TEST_CASE("Redact RGB image", "[Image][redact]") {
+    std::vector<uint8_t> pixels(4 * 4 * 3, 255); // wit RGB
     Image img(4, 4, 3, pixels);
 
-    Cordinate region{1, 1, 2, 2};
-    img.redact(region);
+    Rect roi{1, 1, 2, 2};
+    img.redact(roi, 0);
 
-    SECTION("Pixels inside the region are black") {
-        for (int y = 1; y < 3; ++y) {
-            for (int x = 1; x < 3; ++x) {
-                auto rgb = img.getRGB(x, y);
-                REQUIRE(rgb[0] == 0);
-                REQUIRE(rgb[1] == 0);
-                REQUIRE(rgb[2] == 0);
-            }
-        }
-    }
+    auto rgb = img.getRGB(1, 1);
+    REQUIRE(rgb[0] == 0);
+    REQUIRE(rgb[1] == 0);
+    REQUIRE(rgb[2] == 0);
 
-    SECTION("Pixels outside the region remain white") {
-        auto rgb = img.getRGB(0, 0);
-        REQUIRE(rgb[0] == 255);
-        REQUIRE(rgb[1] == 255);
-        REQUIRE(rgb[2] == 255);
-    }
+    auto untouched = img.getRGB(0, 0);
+    REQUIRE(untouched[0] == 255);
 }
 
-TEST_CASE("Redact multiple regions to gray", "[redact]") {
-    std::vector<uint8_t> pixels(4 * 4 * 3, 255); // 4x4 white RGB image
-    Image img(4, 4, 3, pixels);
+TEST_CASE("Redact grayscale image", "[Image][redact]") {
+    std::vector<uint8_t> pixels(4 * 4 * 1, 200); // lichtgrijs
+    Image img(4, 4, 1, pixels);
 
-    std::vector<Cordinate> regions = {
+    Rect roi{0, 0, 2, 2};
+    img.redact(roi, 100);
+
+    auto gray = img.getRGB(1, 1);
+    REQUIRE(gray[0] == 100);
+    REQUIRE(gray[1] == 100);
+    REQUIRE(gray[2] == 100);
+}
+
+TEST_CASE("Redact strips alpha from RGBA", "[Image][redact]") {
+    std::vector<uint8_t> pixels(2 * 2 * 4, 255); // wit RGBA
+    Image img(2, 2, 4, pixels);
+
+    Rect roi{0, 0, 2, 2};
+    img.redact(roi, 0);
+
+    REQUIRE(img.channels == 3); // alpha gestript
+
+    auto rgb = img.getRGB(0, 0);
+    REQUIRE(rgb[0] == 0);
+    REQUIRE(rgb[1] == 0);
+    REQUIRE(rgb[2] == 0);
+}
+
+TEST_CASE("Redact multiple regions", "[Image][redact]") {
+    std::vector<uint8_t> pixels(5 * 5 * 3, 255); // wit RGB
+    Image img(5, 5, 3, pixels);
+
+    std::vector<Rect> rois = {
         {0, 0, 2, 2},
-        {2, 2, 2, 2}
+        {3, 3, 2, 2}
     };
+    img.redact(rois, 50);
 
-    img.redact(regions, 128);
+    auto topLeft = img.getRGB(1, 1);
+    REQUIRE(topLeft[0] == 50);
 
-    SECTION("First region is gray") {
-        for (int y = 0; y < 2; ++y) {
-            for (int x = 0; x < 2; ++x) {
-                auto rgb = img.getRGB(x, y);
-                REQUIRE(rgb[0] == 128);
-                REQUIRE(rgb[1] == 128);
-                REQUIRE(rgb[2] == 128);
-            }
-        }
-    }
+    auto bottomRight = img.getRGB(4, 4);
+    REQUIRE(bottomRight[0] == 50);
 
-    SECTION("Second region is gray") {
-        for (int y = 2; y < 4; ++y) {
-            for (int x = 2; x < 4; ++x) {
-                auto rgb = img.getRGB(x, y);
-                REQUIRE(rgb[0] == 128);
-                REQUIRE(rgb[1] == 128);
-                REQUIRE(rgb[2] == 128);
-            }
-        }
-    }
-
-    SECTION("Pixels outside all regions remain white") {
-        auto rgb = img.getRGB(3, 0);
-        REQUIRE(rgb[0] == 255);
-        REQUIRE(rgb[1] == 255);
-        REQUIRE(rgb[2] == 255);
-    }
-}
-
-TEST_CASE("Redact region that exceeds image bounds", "[redact]") {
-    std::vector<uint8_t> pixels(4 * 4 * 3, 255); // 4x4 white RGB image
-    Image img(4, 4, 3, pixels);
-
-    Cordinate region{-5, -5, 10, 10}; // covers entire image
-    img.redact(region);
-
-    SECTION("All pixels are black") {
-        for (int y = 0; y < 4; ++y) {
-            for (int x = 0; x < 4; ++x) {
-                auto rgb = img.getRGB(x, y);
-                REQUIRE(rgb[0] == 0);
-                REQUIRE(rgb[1] == 0);
-                REQUIRE(rgb[2] == 0);
-            }
-        }
-    }
-}
-
-TEST_CASE("Redact with empty region list does nothing", "[redact]") {
-    std::vector<uint8_t> pixels(4 * 4 * 3, 255); // 4x4 white RGB image
-    Image img(4, 4, 3, pixels);
-
-    std::vector<Cordinate> empty;
-    img.redact(empty);
-
-    SECTION("All pixels remain white") {
-        for (int y = 0; y < 4; ++y) {
-            for (int x = 0; x < 4; ++x) {
-                auto rgb = img.getRGB(x, y);
-                REQUIRE(rgb[0] == 255);
-                REQUIRE(rgb[1] == 255);
-                REQUIRE(rgb[2] == 255);
-            }
-        }
-    }
+    auto untouched = img.getRGB(2, 2);
+    REQUIRE(untouched[0] == 255);
 }

@@ -248,10 +248,10 @@ namespace LibGraphics {
         return rgb;
     }
 
-    void Image::redact(const Cordinate& c, uint8_t value) {
+    void Image::redact(const Type::Rect& roi, uint8_t value) {
         if (!isValid()) return;
 
-        // 🔥 Als er per ongeluk een RGBA image binnenkomt → strip alpha
+        // 🔥 Strip alpha inline als RGBA
         if (channels == 4) {
             std::vector<uint8_t> rgb;
             rgb.reserve(width * height * 3);
@@ -267,15 +267,17 @@ namespace LibGraphics {
             channels = 3;
         }
 
+        // ✅ Alleen RGB of grayscale toegestaan
         if (!(channels == 1 || channels == 3)) {
             std::cerr << "Unsupported channel count: " << channels << "\n";
             return;
         }
 
-        int x0 = std::max(0, c.x);
-        int y0 = std::max(0, c.y);
-        int x1 = std::min(width, c.x + c.w);
-        int y1 = std::min(height, c.y + c.h);
+        // 📏 Bereken veilige grenzen
+        int x0 = std::max(0, roi.X);
+        int y0 = std::max(0, roi.Y);
+        int x1 = std::min(width, roi.X + roi.Width);
+        int y1 = std::min(height, roi.Y + roi.Height);
 
         for (int y = y0; y < y1; ++y) {
             for (int x = x0; x < x1; ++x) {
@@ -283,7 +285,7 @@ namespace LibGraphics {
 
                 if (channels == 1) {
                     data[idx] = value;
-                } else { // channels == 3
+                } else {
                     data[idx + 0] = value;
                     data[idx + 1] = value;
                     data[idx + 2] = value;
@@ -292,9 +294,9 @@ namespace LibGraphics {
         }
     }
 
-    void Image::redact(const std::vector<Cordinate>& cordinates, uint8_t value) {
-        for (const auto& c : cordinates) {
-            redact(c, value);
+    void Image::redact(const std::vector<Type::Rect>& rois, uint8_t value) {
+        for (const auto& roi : rois) {
+            redact(roi, value);
         }
     }
 }

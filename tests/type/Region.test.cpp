@@ -1,8 +1,8 @@
-#include "LibGraphics/match/Region.hpp"
+#include "LibGraphics/type/Region.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
-using namespace LibGraphics::Match;
+using namespace LibGraphics::Type;
 
 TEST_CASE("Region default constructor", "[Region]") {
     Region r;

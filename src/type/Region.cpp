@@ -1,6 +1,6 @@
-#include "LibGraphics/match/Region.hpp"
+#include "LibGraphics/type/Region.hpp"
 
-namespace LibGraphics::Match {
+namespace LibGraphics::Type {
   Region Region::Center() const
   {
     const int centerX = X + Width / 2;
