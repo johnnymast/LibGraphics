@@ -249,7 +249,10 @@ namespace LibGraphics {
     }
 
     void Image::redact(const Cordinate& c, uint8_t value) {
-        if (!isValid()) return;
+        if (!isValid()) {
+            std::cerr << "Image not valid\n";
+            return;
+        }
         if (!(channels == 1 || channels == 3)) {
             std::cerr << "Unsupported channel count: " << channels << "\n";
             return;
@@ -260,10 +263,11 @@ namespace LibGraphics {
         int x1 = std::min(width, c.x + c.w);
         int y1 = std::min(height, c.y + c.h);
 
+        std::cout << "Redacting from (" << x0 << "," << y0 << ") to (" << x1 << "," << y1 << ")\n";
+
         for (int y = y0; y < y1; ++y) {
             for (int x = x0; x < x1; ++x) {
                 size_t idx = (static_cast<size_t>(y) * width + x) * channels;
-
                 if (channels == 1) {
                     data[idx] = value;
                 } else { // channels == 3
@@ -274,6 +278,7 @@ namespace LibGraphics {
             }
         }
     }
+
 
     void Image::redact(const std::vector<Cordinate>& cordinates, uint8_t value) {
         for (const auto& c : cordinates) {
