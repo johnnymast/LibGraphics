@@ -9,7 +9,7 @@
 
 namespace LibGraphics {
 
-    struct Region {
+    struct Coords {
         int x;
         int y;
         int w;
@@ -40,8 +40,8 @@ namespace LibGraphics {
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] Image clone() const;
 
-        void redact(const Region& region, uint8_t value = 0);
-        void redact(const std::vector<Region>& regions, uint8_t value = 0);
+        void redact(const Coords& coords, uint8_t value = 0);
+        void redact(const std::vector<Coords>& coordsList, uint8_t value = 0);
 
 
 
