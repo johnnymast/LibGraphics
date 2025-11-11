@@ -248,29 +248,25 @@ namespace LibGraphics {
         return rgb;
     }
 
-    void Image::redact(const Cordinate& cordinate, uint8_t value) {
+    void Image::redact(const Cordinate& c, uint8_t value) {
         if (!isValid()) return;
-
-        // Only support grayscale (1 channel) or RGB (3 channels)
         if (!(channels == 1 || channels == 3)) {
             std::cerr << "Unsupported channel count: " << channels << "\n";
             return;
         }
 
-        int x0 = std::max(0, cordinate.x);
-        int y0 = std::max(0, cordinate.y);
-        int x1 = std::min(width, cordinate.x + cordinate.w);
-        int y1 = std::min(height, cordinate.y + cordinate.h);
+        int x0 = std::max(0, c.x);
+        int y0 = std::max(0, c.y);
+        int x1 = std::min(width, c.x + c.w);
+        int y1 = std::min(height, c.y + c.h);
 
         for (int y = y0; y < y1; ++y) {
             for (int x = x0; x < x1; ++x) {
                 size_t idx = (static_cast<size_t>(y) * width + x) * channels;
 
                 if (channels == 1) {
-                    // Grayscale: set single channel
                     data[idx] = value;
-                } else if (channels == 3) {
-                    // RGB: set R, G, B
+                } else { // channels == 3
                     data[idx + 0] = value;
                     data[idx + 1] = value;
                     data[idx + 2] = value;
