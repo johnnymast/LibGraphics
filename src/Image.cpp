@@ -9,16 +9,6 @@
 #include <stdexcept>
 
 namespace LibGraphics {
-    // Image::Image(int width, int height, int channels, std::vector<uint8_t> pixels)
-    //     : width(width), height(height), channels(channels) {
-    //     if (width <= 0 || height <= 0 || channels <= 0) {
-    //         throw std::invalid_argument("[Image] Invalid dimensions or channel count");
-    //     }
-    //     if (pixels.size() != static_cast<size_t>(width * height * channels)) {
-    //         throw std::invalid_argument("[Image] Pixel buffer size does not match dimensions");
-    //     }
-    //     data = std::move(pixels);
-    // }
 
     Image::Image(const int width, const int height, int channels, std::vector<uint8_t> pixels)
            : width(width), height(height), channels(channels) {
