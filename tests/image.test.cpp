@@ -323,3 +323,91 @@ TEST_CASE("Image::getRGB returns correct pixel values", "[image][getRGB]") {
         REQUIRE(bottomRight[2] == 120);
     }
 }
+
+
+TEST_CASE("Single region redact (blackout)", "[redact]") {
+    // Maak een dummy image: 4x4, 3 kanalen (RGB), gevuld met 255 (wit)
+    std::vector<uint8_t> pixels(4 * 4 * 3, 255);
+    Image img(4, 4, 3, pixels);
+
+    Region r{1, 1, 2, 2}; // regio in het midden
+    img.redact(r);
+
+    SECTION("Pixels binnen de regio zijn zwart") {
+        for (int y = 1; y < 3; ++y) {
+            for (int x = 1; x < 3; ++x) {
+                auto rgb = img.getRGB(x, y);
+                REQUIRE(rgb[0] == 0);
+                REQUIRE(rgb[1] == 0);
+                REQUIRE(rgb[2] == 0);
+            }
+        }
+    }
+
+    SECTION("Pixels buiten de regio blijven wit") {
+        auto rgb = img.getRGB(0, 0);
+        REQUIRE(rgb[0] == 255);
+        REQUIRE(rgb[1] == 255);
+        REQUIRE(rgb[2] == 255);
+    }
+}
+
+TEST_CASE("Multiple regions redact (gray)", "[redact]") {
+    std::vector<uint8_t> pixels(4 * 4 * 3, 255);
+    Image img(4, 4, 3, pixels);
+
+    std::vector<Region> regions = {
+        {0, 0, 2, 2},
+        {2, 2, 2, 2}
+    };
+
+    img.redact(regions, 128);
+
+    SECTION("Eerste regio is grijs") {
+        for (int y = 0; y < 2; ++y) {
+            for (int x = 0; x < 2; ++x) {
+                auto rgb = img.getRGB(x, y);
+                REQUIRE(rgb[0] == 128);
+                REQUIRE(rgb[1] == 128);
+                REQUIRE(rgb[2] == 128);
+            }
+        }
+    }
+
+    SECTION("Tweede regio is grijs") {
+        for (int y = 2; y < 4; ++y) {
+            for (int x = 2; x < 4; ++x) {
+                auto rgb = img.getRGB(x, y);
+                REQUIRE(rgb[0] == 128);
+                REQUIRE(rgb[1] == 128);
+                REQUIRE(rgb[2] == 128);
+            }
+        }
+    }
+
+    SECTION("Pixel buiten regio blijft wit") {
+        auto rgb = img.getRGB(3, 0);
+        REQUIRE(rgb[0] == 255);
+        REQUIRE(rgb[1] == 255);
+        REQUIRE(rgb[2] == 255);
+    }
+}
+
+TEST_CASE("Out-of-bounds region", "[redact]") {
+    std::vector<uint8_t> pixels(4 * 4 * 3, 255);
+    Image img(4, 4, 3, pixels);
+
+    Region r{-5, -5, 10, 10}; // groter dan image
+    img.redact(r);
+
+    SECTION("Alle pixels zijn zwart") {
+        for (int y = 0; y < 4; ++y) {
+            for (int x = 0; x < 4; ++x) {
+                auto rgb = img.getRGB(x, y);
+                REQUIRE(rgb[0] == 0);
+                REQUIRE(rgb[1] == 0);
+                REQUIRE(rgb[2] == 0);
+            }
+        }
+    }
+}
