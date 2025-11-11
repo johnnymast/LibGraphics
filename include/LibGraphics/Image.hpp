@@ -9,7 +9,7 @@
 
 namespace LibGraphics {
 
-    struct Coords {
+    struct Cordinate {
         int x;
         int y;
         int w;
@@ -40,10 +40,8 @@ namespace LibGraphics {
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] Image clone() const;
 
-        void redact(const Coords& coords, uint8_t value = 0);
-        void redact(const std::vector<Coords>& coordsList, uint8_t value = 0);
-
-
+        void redact(const Cordinate& cordinate, uint8_t value = 0);
+        void redact(const std::vector<Cordinate>& cordinates, uint8_t value = 0);
 
     private:
         static std::string mkTempFilename(const std::string& prefix = "libgraphics_", const std::string& ext = ".png") {

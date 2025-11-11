@@ -248,27 +248,26 @@ namespace LibGraphics {
         return rgb;
     }
 
-    void Image::redact(const Coords& coords, uint8_t value) {
+    void Image::redact(const Cordinate& cordinate, uint8_t value) {
         if (!isValid()) return;
 
-        // Bounds check
-        int x0 = std::max(0, coords.x);
-        int y0 = std::max(0, coords.y);
-        int x1 = std::min(width, coords.x + coords.w);
-        int y1 = std::min(height, coords.y + coords.h);
+        int x0 = std::max(0, cordinate.x);
+        int y0 = std::max(0, cordinate.y);
+        int x1 = std::min(width, cordinate.x + cordinate.w);
+        int y1 = std::min(height, cordinate.y + cordinate.h);
 
         for (int y = y0; y < y1; ++y) {
             for (int x = x0; x < x1; ++x) {
                 size_t idx = (static_cast<size_t>(y) * width + x) * channels;
                 for (int c = 0; c < channels; ++c) {
-                    data[idx + c] = value; // standaard zwart (0), of bv. donkergrijs (128)
+                    data[idx + c] = value;
                 }
             }
         }
     }
 
-    void Image::redact(const std::vector<Coords>& coordsList, uint8_t value) {
-        for (const auto& c : coordsList) {
+    void Image::redact(const std::vector<Cordinate>& cordinates, uint8_t value) {
+        for (const auto& c : cordinates) {
             redact(c, value);
         }
     }
