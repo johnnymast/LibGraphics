@@ -9,6 +9,13 @@
 
 namespace LibGraphics {
 
+    struct Region {
+        int x;
+        int y;
+        int w;
+        int h;
+    };
+
     struct Image {
         std::vector<uint8_t> data;
         int width = 0;
@@ -32,6 +39,9 @@ namespace LibGraphics {
         [[nodiscard]] Image crop(int x, int y, int width, int height) const;
         [[nodiscard]] bool isValid() const;
         [[nodiscard]] Image clone() const;
+
+        void redact(const Region& region, uint8_t value = 0);
+        void redact(const std::vector<Region>& regions, uint8_t value = 0);
 
 
 

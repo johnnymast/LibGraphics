@@ -247,4 +247,29 @@ namespace LibGraphics {
 
         return rgb;
     }
+
+    void Image::redact(const Region& region, const uint8_t value) {
+        if (!isValid()) return;
+
+        // Bounds check
+        int x0 = std::max(0, region.x);
+        int y0 = std::max(0, region.y);
+        int x1 = std::min(width, region.x + region.w);
+        int y1 = std::min(height, region.y + region.h);
+
+        for (int y = y0; y < y1; ++y) {
+            for (int x = x0; x < x1; ++x) {
+                const size_t idx = (static_cast<size_t>(y) * width + x) * channels;
+                for (int c = 0; c < channels; ++c) {
+                    data[idx + c] = value; // standaard zwart (0), of bv. donkergrijs (128)
+                }
+            }
+        }
+    }
+
+    void Image::redact(const std::vector<Region>& regions, const uint8_t value) {
+        for (const auto& r : regions) {
+            redact(r, value);
+        }
+    }
 }
