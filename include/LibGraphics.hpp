@@ -16,11 +16,12 @@
 #include "LibGraphics/Image.hpp"
 
 namespace LibGraphics {
-    LIBGRAPHICS_API struct LibGraphicsInfo {
+    LIBGRAPHICS_API struct OpenCVInfo {
         int version_major = RELEASE_VERSION_MAJOR;
         int version_minor = RELEASE_VERSION_MINOR;
         int version_patch = RELEASE_VERSION_PATCH;
+        bool cuda_supported{false};
     };
 
-    LIBGRAPHICS_API LibGraphicsInfo getLibGraphicsVersion();
+    LIBGRAPHICS_API OpenCVInfo GetOpenCVInfo();
 }
