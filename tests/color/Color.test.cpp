@@ -4,23 +4,28 @@
 
 using LibGraphics::Color::Information;
 
-TEST_CASE("Color greenish checks") {
+TEST_CASE("Color greenish checks", "[Information][is_greenish]") {
     SECTION("ExactMatchIsGreen") {
-        REQUIRE(Information::is_greenish(71, 145, 114));
+        // Exact target kleur #708d00 (112,141,0)
+        REQUIRE(Information::is_greenish(112, 141, 0, 25));
     }
 
     SECTION("WithinBufferIsGreen") {
-        REQUIRE(Information::is_greenish(80, 150, 120));
+        // Binnen ±25 van target
+        REQUIRE(Information::is_greenish(120, 150, 10, 25));
+        REQUIRE(Information::is_greenish(100, 130, 5, 25));
     }
 
     SECTION("OutsideBufferIsNotGreen") {
-        REQUIRE_FALSE(Information::is_greenish(10, 10, 10));
-        REQUIRE_FALSE(Information::is_greenish(200, 50, 50));
+        REQUIRE_FALSE(Information::is_greenish(10, 10, 10, 25));
+        REQUIRE_FALSE(Information::is_greenish(200, 200, 200, 25));
     }
 
     SECTION("CustomBufferWorks") {
-        REQUIRE(Information::is_greenish(100, 170, 140, 50));
-        REQUIRE_FALSE(Information::is_greenish(100, 170, 140, 10));
+        // Met buffer 50 valt deze kleur binnen bereik
+        REQUIRE(Information::is_greenish(100, 170, 40, 50));
+        // Met buffer 10 valt dezelfde kleur buiten bereik
+        REQUIRE_FALSE(Information::is_greenish(100, 170, 40, 10));
     }
 }
 
