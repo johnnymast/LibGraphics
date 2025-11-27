@@ -4,9 +4,10 @@
 
 namespace LibGraphics::Color {
     bool Information::is_greenish(int r, int g, int b, int buffer) {
-        constexpr int target_r = 71;
-        constexpr int target_g = 145;
-        constexpr int target_b = 114;
+        // Doel: kleur #708d00 (RGB: 112, 141, 0)
+        constexpr int target_r = 112;
+        constexpr int target_g = 141;
+        constexpr int target_b = 0;
 
         return (r >= target_r - buffer && r <= target_r + buffer) &&
                (g >= target_g - buffer && g <= target_g + buffer) &&
