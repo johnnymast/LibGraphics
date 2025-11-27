@@ -43,8 +43,6 @@ namespace LibGraphics {
     }
 
     Image Image::load(const std::string &path) {
-        Image img;
-
         int width, height, channels;
         unsigned char *imageData = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
@@ -56,14 +54,11 @@ namespace LibGraphics {
         std::vector<uint8_t> pixels(imageData, imageData + dataSize);
         stbi_image_free(imageData);
 
+        // Strip alpha vóór assignment
         stripAlpha(pixels, width, height, channels);
 
-        img.width = width;
-        img.height = height;
-        img.channels = channels;
+        Image img(width, height, channels, std::move(pixels));
         img.origin = path;
-        img.data = std::move(pixels);
-
         return img;
     }
 
@@ -78,9 +73,12 @@ namespace LibGraphics {
         std::vector<uint8_t> pixels(pixelsRaw, pixelsRaw + (w * h * c));
         stbi_image_free(pixelsRaw);
 
+        // Strip alpha vóór assignment
         stripAlpha(pixels, w, h, c);
 
-        return Image(w, h, c, std::move(pixels));
+        Image img(w, h, c, std::move(pixels));
+        img.origin = "memory";
+        return img;
     }
 
     Image Image::load_from_memory(const std::vector<uint8_t> &buffer) {

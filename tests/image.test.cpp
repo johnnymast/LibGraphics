@@ -32,7 +32,7 @@ std::vector<uint8_t> load_file(const std::string& path) {
 }
 
 TEST_CASE("Image::load loads valid image", "[Image][load]") {
-    const std::string path = "../tests/assets/image/tux.png"; // Make sure this file exists
+    const std::string path = "../tests/assets/image/tux.png";
     REQUIRE(std::filesystem::exists(path));
 
     Image img = Image::load(path);
@@ -40,6 +40,36 @@ TEST_CASE("Image::load loads valid image", "[Image][load]") {
     REQUIRE(img.height > 0);
     REQUIRE(img.channels >= 1);
     REQUIRE(!img.data.empty());
+}
+
+TEST_CASE("Image::load and crop tux.png", "[Image][crop]") {
+    const std::string path = "../tests/assets/image/tux.png";
+    REQUIRE(std::filesystem::exists(path));
+
+    Image img = Image::load(path);
+    REQUIRE(img.isValid());
+    REQUIRE(img.width == 1000);
+    REQUIRE(img.height == 1160);
+    REQUIRE((img.channels == 1 || img.channels == 3));
+
+    SECTION("Crop central 100x100 region") {
+        Image cropped = img.crop(450, 530, 100, 100);
+        REQUIRE(cropped.isValid());
+        REQUIRE(cropped.width == 100);
+        REQUIRE(cropped.height == 100);
+        REQUIRE(cropped.channels == img.channels);
+
+        // Check that pixel inside crop matches original
+        auto origPixel = img.getRGB(450, 530);
+        auto cropPixel = cropped.getRGB(0, 0);
+        REQUIRE(origPixel == cropPixel);
+    }
+
+    SECTION("Out-of-bounds crop returns empty image") {
+        Image fail = img.crop(950, 1150, 100, 100);
+        REQUIRE_FALSE(fail.isValid());
+        REQUIRE(fail.data.empty());
+    }
 }
 
 TEST_CASE("Image::save writes image to disk", "[Image][save]") {
