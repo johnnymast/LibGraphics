@@ -135,15 +135,50 @@ TEST_CASE("Image constructor validates buffer size", "[image][constructor]") {
 }
 
 TEST_CASE("Image constructor accepts valid buffer", "[image][constructor]") {
-    int w = 10, h = 10, c = 4;
+    int w = 10, h = 10, c = 3;
     std::vector<uint8_t> pixels(w * h * c, 255);
 
     Image img(w, h, c, std::move(pixels));
 
     REQUIRE(img.width == w);
     REQUIRE(img.height == h);
-    REQUIRE(img.channels == c);
-    REQUIRE(img.data.size() == w * h * c);
+    REQUIRE(img.channels == 3);
+    REQUIRE(img.data.size() == w * h * 3);
+}
+
+TEST_CASE("Image constructor strips alpha from RGBA", "[image][constructor]") {
+    int w = 2, h = 2, c = 4;
+    std::vector<uint8_t> pixels{
+        255, 0, 0, 255,   // rood met alpha
+        0, 255, 0, 128,   // groen met alpha
+        0, 0, 255, 64,    // blauw met alpha
+        255, 255, 255, 0  // wit met alpha
+    };
+
+    Image img(w, h, c, std::move(pixels));
+
+    REQUIRE(img.channels == 3); // alpha gestript
+    REQUIRE(img.data.size() == w * h * 3);
+
+    auto pixel1 = img.getRGB(0, 0);
+    REQUIRE(pixel1[0] == 255);
+    REQUIRE(pixel1[1] == 0);
+    REQUIRE(pixel1[2] == 0);
+
+    auto pixel2 = img.getRGB(1, 0);
+    REQUIRE(pixel2[0] == 0);
+    REQUIRE(pixel2[1] == 255);
+    REQUIRE(pixel2[2] == 0);
+
+    auto pixel3 = img.getRGB(0, 1);
+    REQUIRE(pixel3[0] == 0);
+    REQUIRE(pixel3[1] == 0);
+    REQUIRE(pixel3[2] == 255);
+
+    auto pixel4 = img.getRGB(1, 1);
+    REQUIRE(pixel4[0] == 255);
+    REQUIRE(pixel4[1] == 255);
+    REQUIRE(pixel4[2] == 255);
 }
 
 TEST_CASE("Image constructor with invalid buffer size throws", "[Image][constructor]") {
@@ -353,20 +388,6 @@ TEST_CASE("Redact grayscale image", "[Image][redact]") {
     REQUIRE(gray[2] == 100);
 }
 
-TEST_CASE("Redact strips alpha from RGBA", "[Image][redact]") {
-    std::vector<uint8_t> pixels(2 * 2 * 4, 255); // wit RGBA
-    Image img(2, 2, 4, pixels);
-
-    Rect roi{0, 0, 2, 2};
-    img.redact(roi, 0);
-
-    REQUIRE(img.channels == 3); // alpha gestript
-
-    auto rgb = img.getRGB(0, 0);
-    REQUIRE(rgb[0] == 0);
-    REQUIRE(rgb[1] == 0);
-    REQUIRE(rgb[2] == 0);
-}
 
 TEST_CASE("Redact multiple regions", "[Image][redact]") {
     std::vector<uint8_t> pixels(5 * 5 * 3, 255); // wit RGB

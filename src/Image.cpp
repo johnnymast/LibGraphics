@@ -7,8 +7,24 @@
 
 #include <opencv2/opencv.hpp>
 #include <stdexcept>
+#include <iostream>
 
 namespace LibGraphics {
+
+    // Helper: strip alpha channel
+    void Image::stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels) {
+        if (channels == 4) {
+            std::vector<uint8_t> rgb;
+            rgb.reserve(static_cast<size_t>(width) * height * 3);
+            for (size_t i = 0; i < pixels.size(); i += 4) {
+                rgb.push_back(pixels[i]);     // R
+                rgb.push_back(pixels[i + 1]); // G
+                rgb.push_back(pixels[i + 2]); // B
+            }
+            pixels = std::move(rgb);
+            channels = 3;
+        }
+    }
 
     Image::Image(const int width, const int height, int channels, std::vector<uint8_t> pixels)
            : width(width), height(height), channels(channels) {
@@ -19,10 +35,12 @@ namespace LibGraphics {
             throw std::invalid_argument("[Image] Pixel buffer size does not match dimensions");
         }
 
+        // Strip alpha if RGBA
+        stripAlpha(pixels, width, height, this->channels);
+
         origin = "buffer";
         data = std::move(pixels);
     }
-
 
     Image Image::load(const std::string &path) {
         Image img;
@@ -34,17 +52,39 @@ namespace LibGraphics {
             throw std::runtime_error("Failed to load image: " + path);
         }
 
+        size_t dataSize = static_cast<size_t>(width) * height * channels;
+        std::vector<uint8_t> pixels(imageData, imageData + dataSize);
+        stbi_image_free(imageData);
+
+        stripAlpha(pixels, width, height, channels);
+
         img.width = width;
         img.height = height;
         img.channels = channels;
         img.origin = path;
-
-        size_t dataSize = static_cast<size_t>(width) * height * channels;
-        img.data.assign(imageData, imageData + dataSize);
-
-        stbi_image_free(imageData);
+        img.data = std::move(pixels);
 
         return img;
+    }
+
+    Image Image::load_from_memory(const uint8_t *buffer, const size_t size) {
+        int w = 0, h = 0, c = 0;
+        stbi_uc *pixelsRaw = stbi_load_from_memory(buffer, static_cast<int>(size), &w, &h, &c, 0);
+
+        if (!pixelsRaw) {
+            throw std::runtime_error("[Image::load_from_memory] Failed to decode image from memory");
+        }
+
+        std::vector<uint8_t> pixels(pixelsRaw, pixelsRaw + (w * h * c));
+        stbi_image_free(pixelsRaw);
+
+        stripAlpha(pixels, w, h, c);
+
+        return Image(w, h, c, std::move(pixels));
+    }
+
+    Image Image::load_from_memory(const std::vector<uint8_t> &buffer) {
+        return load_from_memory(buffer.data(), buffer.size());
     }
 
     bool Image::save(const std::string &path, const int quality) const {
@@ -71,10 +111,9 @@ namespace LibGraphics {
     }
 
     Image Image::crop(const int x, const int y, int width, int height) const {
-        // Validate bounds
         if (x < 0 || y < 0 || x + width > this->width || y + height > this->height) {
             std::cerr << "[Image::crop] Invalid crop region\n";
-            return Image(); // or throw, or return empty
+            return Image();
         }
 
         Image result;
@@ -94,7 +133,6 @@ namespace LibGraphics {
         }
 
         result.origin = origin;
-
         return result;
     }
 
@@ -106,26 +144,21 @@ namespace LibGraphics {
             return;
         }
 
-        // Step 2: Launch viewer
 #ifdef __linux__
         std::string command = "xdg-open \"" + temp_path + "\"";
         int result = std::system(command.c_str());
         if (result != 0) {
             std::cerr << "[Image::show] Failed to open image with xdg-open\n";
         }
-
 #elif defined(_WIN32)
         ShellExecuteA(nullptr, "open", temp_path.c_str(), nullptr, nullptr, SW_SHOW);
-
 #else
         std::cerr << "[Image::show] Image preview not supported on this platform\n";
 #endif
 
-        // Wait for keypress
         std::cout << "[Image::show] Press ENTER to continue...\n";
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        // Delete temp file
         std::error_code ec;
         std::filesystem::remove(temp_path, ec);
         if (ec) {
@@ -133,23 +166,15 @@ namespace LibGraphics {
         }
     }
 
-    /**
-     * Convert the image to grayscale and return a new 1-channel image.
-     * If the source already has a single channel, returns a clone.
-     * The resulting image uses 8 bits per pixel (grayscale).
-     */
     Image Image::toGrayscale() const {
-        // Basic validation
         if (width <= 0 || height <= 0 || data.empty()) {
             return Image();
         }
 
-        // If already grayscale, return a clone
         if (channels == 1) {
             return clone();
         }
 
-        // Allocate grayscale data: width * height, 1 channel
         std::vector<uint8_t> grayData;
         grayData.resize(static_cast<size_t>(width) * height);
 
@@ -159,40 +184,16 @@ namespace LibGraphics {
                 uint8_t r = data[srcIdx + 0];
                 uint8_t g = data[srcIdx + 1];
                 uint8_t b = data[srcIdx + 2];
-                // Rec. 601 luma: 0.299*R + 0.587*G + 0.114*B
-                uint8_t gray = static_cast<uint8_t>(static_cast<int>(0.299 * r + 0.587 * g + 0.114 * b));
+                uint8_t gray = static_cast<uint8_t>(
+                    static_cast<int>(0.299 * r + 0.587 * g + 0.114 * b)
+                );
                 grayData[y * width + x] = gray;
             }
         }
 
         auto clone = Image(width, height, 1, std::move(grayData));
-
         clone.origin = origin;
-
         return clone;
-    }
-
-
-    Image Image::load_from_memory(const uint8_t *buffer, const size_t size) {
-        int w = 0, h = 0, c = 0;
-        stbi_uc *pixels = stbi_load_from_memory(buffer, static_cast<int>(size), &w, &h, &c, 0);
-
-        if (!pixels) {
-            throw std::runtime_error("[Image::load_from_memory] Failed to decode image from memory");
-        }
-
-        std::vector<uint8_t> data(pixels, pixels + (w * h * c));
-        stbi_image_free(pixels);
-
-        auto clone = Image(w, h, c, std::move(data));
-
-        clone.origin = "memory";
-
-        return clone;
-    }
-
-    Image Image::load_from_memory(const std::vector<uint8_t> &buffer) {
-        return load_from_memory(buffer.data(), buffer.size());
     }
 
     bool Image::isValid() const {
@@ -207,63 +208,34 @@ namespace LibGraphics {
     }
 
     std::array<uint8_t, 3> Image::getRGB(int x, int y) const {
-        // Validate coordinates
         if (x < 0 || x >= width || y < 0 || y >= height) {
             throw std::out_of_range("[Image::getRGB] Coordinates out of bounds");
         }
-
         if (!isValid()) {
             throw std::runtime_error("[Image::getRGB] Invalid image");
         }
 
-        // Calculate the index in the data array
         size_t index = (static_cast<size_t>(y) * width + x) * channels;
 
         std::array<uint8_t, 3> rgb;
-
         if (channels == 1) {
-            // Grayscale: return same value for R, G, B
             uint8_t gray = data[index];
             rgb = {gray, gray, gray};
         } else if (channels == 3) {
-            // RGB: return R, G, B
-            rgb = {data[index], data[index + 1], data[index + 2]};
-        } else if (channels == 4) {
-            // RGBA: return R, G, B (ignore alpha)
             rgb = {data[index], data[index + 1], data[index + 2]};
         } else {
             throw std::runtime_error("[Image::getRGB] Unsupported channel count");
         }
-
         return rgb;
     }
 
     void Image::redact(const Type::Rect& roi, uint8_t value) {
         if (!isValid()) return;
-
-        // 🔥 Strip alpha inline als RGBA
-        if (channels == 4) {
-            std::vector<uint8_t> rgb;
-            rgb.reserve(width * height * 3);
-
-            for (size_t i = 0; i < data.size(); i += 4) {
-                rgb.push_back(data[i]);     // R
-                rgb.push_back(data[i + 1]); // G
-                rgb.push_back(data[i + 2]); // B
-                // alpha wordt genegeerd
-            }
-
-            data = std::move(rgb);
-            channels = 3;
-        }
-
-        // ✅ Alleen RGB of grayscale toegestaan
         if (!(channels == 1 || channels == 3)) {
             std::cerr << "Unsupported channel count: " << channels << "\n";
             return;
         }
 
-        // 📏 Bereken veilige grenzen
         int x0 = std::max(0, roi.X);
         int y0 = std::max(0, roi.Y);
         int x1 = std::min(width, roi.X + roi.Width);
@@ -272,7 +244,6 @@ namespace LibGraphics {
         for (int y = y0; y < y1; ++y) {
             for (int x = x0; x < x1; ++x) {
                 size_t idx = (static_cast<size_t>(y) * width + x) * channels;
-
                 if (channels == 1) {
                     data[idx] = value;
                 } else {

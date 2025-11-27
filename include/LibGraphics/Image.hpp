@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <chrono>
 #include <sstream>
+#include <array>
 
 using LibGraphics::Type::Rect;
 
@@ -17,7 +18,7 @@ namespace LibGraphics {
         std::vector<uint8_t> data;
         int width = 0;
         int height = 0;
-        int channels = 0;
+        int channels = 0;   // altijd 1 (grayscale) of 3 (RGB)
         std::string origin = "empty";
 
         Image() = default;
@@ -47,5 +48,7 @@ namespace LibGraphics {
             oss << prefix << now << ext;
             return std::filesystem::temp_directory_path() / oss.str();
         }
+
+        static void stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels);
     };
 }
