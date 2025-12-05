@@ -8,6 +8,7 @@
   [![Tests](https://github.com/johnnymast/LibGraphics/actions/workflows/testing.yml/badge.svg)](https://github.com/johnnymast/LibGraphics/actions/workflows/testing.yml)
 </div>
 
+
 <div align="center">
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum arcu, accumsan luctus velit. In arcu felis, bibendum nec ligula non, consectetur rutrum dui. Nam rutrum enim sed metus tempus fringilla. Donec pharetra libero eu nunc placerat, a ornare metus gravida. Fusce id tellus vitae nisl aliquet placerat vel eget purus. Nam imperdiet volutpat ipsum vitae faucibus. Donec purus nulla, porttitor et euismod sed, maximus non enim.
@@ -27,6 +28,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in vestibulum a
 
 
 A lightweight C++ library for image manipulation designed specifically for AI projects. LibGraphics provides a clean, modern interface for common image processing operations, built on top of OpenCV.
+
+
+## Windows
+- install vkpg
+- install cuda https://developer.nvidia.com/cuda-downloads?target_os=Windows&target_arch=x86_64&target_version=11&target_type=exe_local
+- vcpkg install opencv[cuda,contrib]:x64-windows
+- vcpkg install leptonica:x64-windows tesseract
+- add to CMake Options -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows
 
 ## Notes
 

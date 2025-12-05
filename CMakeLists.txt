@@ -62,6 +62,7 @@ target_include_directories(${PROJECT_NAME}
         PUBLIC
         ${OpenCV_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${OpenJPEG_INCLUDE_DIRS}
         PRIVATE
         ${CMAKE_BINARY_DIR}/generated
 )
@@ -69,6 +70,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
         PUBLIC
         ${OpenCV_LINK_LIBRARIES}
+        ${OpenJPEG_LINK_LIBRARIES}
         PRIVATE
         Tesseract::Tesseract
         leptonica
