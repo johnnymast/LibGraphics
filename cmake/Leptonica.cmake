@@ -1,14 +1,14 @@
-# ... existing code ...
-include(FetchContent)
+# Leptonica.cmake — Arch Linux version (pkg-config)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LEPT REQUIRED lept)
 
-message(STATUS "Fetching Leptonica...")
+add_library(Leptonica::Leptonica INTERFACE IMPORTED)
 
-FetchContent_Declare(
-        leptonica
-        GIT_REPOSITORY https://github.com/DanBloomberg/leptonica.git
-        GIT_TAG        1.85.0 # Or another specific tag/commit
+target_include_directories(Leptonica::Leptonica INTERFACE
+        ${LEPT_INCLUDE_DIRS}
 )
 
-FetchContent_MakeAvailable(leptonica)
+target_link_libraries(Leptonica::Leptonica INTERFACE
+        ${LEPT_LIBRARIES}
+)
