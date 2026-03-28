@@ -1,6 +1,9 @@
 # ... existing code ...
 include(FetchContent)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+
 # Leptonica options
 #set(BUILD_PROG OFF CACHE BOOL "" FORCE)
 #set(SW_BUILD OFF CACHE BOOL "" FORCE)
@@ -30,8 +33,6 @@ FetchContent_Declare(
         leptonica
         GIT_REPOSITORY https://github.com/DanBloomberg/leptonica.git
         GIT_TAG        1.85.0 # Or another specific tag/commit
-#        GIT_TAG 1.87.0
-#        GIT_SHALLOW TRUE
 )
 
 #if (WIN32)

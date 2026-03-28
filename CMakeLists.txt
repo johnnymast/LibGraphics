@@ -66,6 +66,8 @@ target_include_directories(${PROJECT_NAME}
         ${OpenJPEG_INCLUDE_DIRS}
         PRIVATE
         ${CMAKE_BINARY_DIR}/generated
+        ${tesseract_BINARY_DIR}/include
+        ${tesseract_SOURCE_DIR}/include
 )
 
 target_link_libraries(${PROJECT_NAME}
