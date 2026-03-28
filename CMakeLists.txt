@@ -73,7 +73,7 @@ target_link_libraries(${PROJECT_NAME}
         ${OpenCV_LINK_LIBRARIES}
         ${OpenJPEG_LINK_LIBRARIES}
         PRIVATE
-#        Tesseract::Tesseract
+        Tesseract::Tesseract
         leptonica
 )
 

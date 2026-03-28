@@ -19,4 +19,6 @@ set_target_properties(libtesseract PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_library(Tesseract::Tesseract ALIAS libtesseract)
 
+
+
 message(STATUS "Tesseract OCR setup complete")
