@@ -45,8 +45,8 @@ target_link_libraries(graphics_testsuite
 )
 
 
-
 # Register tests
 include(CTest)
 include(Catch)
+
 catch_discover_tests(graphics_testsuite)

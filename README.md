@@ -70,10 +70,10 @@ sudo pacman -S --needed \
 abseil-cpp cblas ffmpeg freetype2 gcc-libs glib2 glibc \
 gst-plugins-base gst-plugins-base-libs gstreamer harfbuzz lapack \
 libdc1394 libglvnd libjpeg-turbo libjxl libpng libtiff libwebp \
-openexr openjpeg2 protobuf zlib hdf5 vtk tesseract tesseract-data-osd tesseract-data-eng 
+openexr openjpeg2 protobuf zlib hdf5 vtk
 ```
 
-- C++17 compatible compiler
+- C++17 compatible compiler[]()[cmake-build-debug](../cmake-build-debug)
 - CMake 3.15 or higher
 - OpenCV 4.x
 - extra/tesseract 5.5.1-1 [installed]
@@ -81,6 +81,9 @@ openexr openjpeg2 protobuf zlib hdf5 vtk tesseract tesseract-data-osd tesseract-
 - extra/tesseract-data-osd 2:4.1.0-4 [installed]
 
 ## Installation
+
+1. Check zonder incluce for lept
+2. ALs dat werkt check zonder  lib32-leptonica (als het faalt include Leptonica en zet versie naar 1.7)
 
 ### Building from Source
 
