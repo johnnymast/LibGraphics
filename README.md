@@ -70,7 +70,7 @@ sudo pacman -S --needed \
 abseil-cpp cblas ffmpeg freetype2 gcc-libs glib2 glibc \
 gst-plugins-base gst-plugins-base-libs gstreamer harfbuzz lapack \
 libdc1394 libglvnd libjpeg-turbo libjxl libpng libtiff libwebp \
-openexr openjpeg2 protobuf zlib hdf5 vtk leptonica tesseract tesseract-data-eng cuda opencv-cuda
+openexr openjpeg2 protobuf zlib hdf5 vtk leptonica tesseract tesseract-data-eng opencv
 ```
 
 - C++17 compatible compiler[]()[cmake-build-debug](../cmake-build-debug)
