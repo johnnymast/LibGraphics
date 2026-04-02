@@ -41,6 +41,10 @@ namespace LibGraphics {
         void redact(const Type::Rect& roi, uint8_t value = 0);
         void redact(const std::vector<Type::Rect>& rois, uint8_t value = 0);
 
+        explicit operator bool() const {
+            return isValid();
+        }
+
     private:
         static std::string mkTempFilename(const std::string& prefix = "libgraphics_", const std::string& ext = ".png") {
             auto now = std::chrono::system_clock::now().time_since_epoch().count();

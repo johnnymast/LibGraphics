@@ -224,6 +224,56 @@ TEST_CASE("Image::isValid false for data size mismatch", "[Image][isValid]") {
     REQUIRE_FALSE(img.isValid());
 }
 
+TEST_CASE("Image::operator bool reflects validity", "[Image][bool]") {
+
+    SECTION("Default-constructed image is invalid") {
+        Image img;
+        REQUIRE_FALSE(img.isValid());
+        REQUIRE_FALSE(static_cast<bool>(img));
+        REQUIRE_FALSE(img);
+    }
+
+    SECTION("Valid image evaluates to true") {
+        Image img(2, 2, 3, std::vector<uint8_t>(2 * 2 * 3, 255));
+        REQUIRE(img.isValid());
+        REQUIRE(static_cast<bool>(img));
+        REQUIRE(img);
+    }
+
+    SECTION("Invalid after corruption evaluates to false") {
+        Image img(4, 4, 3, std::vector<uint8_t>(48, 0));
+        REQUIRE(img.isValid());
+
+        img.data.resize(10);
+
+        REQUIRE_FALSE(img.isValid());
+        REQUIRE_FALSE(static_cast<bool>(img));
+        REQUIRE_FALSE(img);
+    }
+
+    SECTION("operator bool works in if-statement") {
+        Image img(1, 1, 3, std::vector<uint8_t>{255, 0, 0});
+        bool executed = false;
+
+        if (img) {
+            executed = true;
+        }
+
+        REQUIRE(executed);
+    }
+
+    SECTION("if-statement does not execute for invalid image") {
+        Image img;
+        bool executed = false;
+
+        if (img) {
+            executed = true;
+        }
+
+        REQUIRE_FALSE(executed);
+    }
+}
+
 TEST_CASE("Image::toGrayscale converts RGB to grayscale correctly", "[Image][toGrayscale]") {
     // Prepare a 2x2 RGB image with known pixel values
     // Pixel order: row-major, each pixel is R,G,B
