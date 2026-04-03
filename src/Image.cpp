@@ -2,8 +2,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "LibGraphics/Image.hpp"
-#include "modules/stb_image_write.h"
-#include "modules/stb_image.h"
+#include "LibGraphics/modules/stb_image_write.hpp"
+#include "LibGraphics/modules/stb_image.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <stdexcept>

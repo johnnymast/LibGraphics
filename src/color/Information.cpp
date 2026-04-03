@@ -1,4 +1,4 @@
-#include "../include/LibGraphics/color/Information.hpp"
+#include "LibGraphics/color/Information.hpp"
 
 #include <algorithm>
 

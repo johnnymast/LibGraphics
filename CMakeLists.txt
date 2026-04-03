@@ -12,27 +12,27 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # Library sources
 # ---------------------------------------------------------
 add_library(${PROJECT_NAME} SHARED
-        include/modules/stb_image.h
-        include/modules/stb_image_write.h
-        include/LibGraphics/exceptions/LowConfidenceException.hpp
+        include/private/LibGraphics/modules/stb_image.hpp
+        include/private/LibGraphics/modules/stb_image_write.hpp
+        include/public/LibGraphics/exceptions/LowConfidenceException.hpp
 
-        include/LibGraphics/ocr/OcrTextReader.hpp
-        include/LibGraphics/ocr/OcrResult.hpp
+        include/public/LibGraphics/ocr/OcrTextReader.hpp
+        include/public/LibGraphics/ocr/OcrResult.hpp
 
-        include/LibGraphics/match/TemplateMatcher.hpp
-        include/LibGraphics/match/MatchResult.hpp
-        include/LibGraphics/match/MatchOptions.hpp
+        include/public/LibGraphics/match/TemplateMatcher.hpp
+        include/public/LibGraphics/match/MatchResult.hpp
+        include/public/LibGraphics/match/MatchOptions.hpp
 
-        include/LibGraphics/type/Region.hpp
-        include/LibGraphics/type/Rect.hpp
+        include/public/LibGraphics/type/Region.hpp
+        include/public/LibGraphics/type/Rect.hpp
 
-        include/LibGraphics/color/Information.hpp
-        include/LibGraphics/color/BackgroundScanner.hpp
+        include/public/LibGraphics/color/Information.hpp
+        include/public/LibGraphics/color/BackgroundScanner.hpp
 
-        include/LibGraphics/utils/Converter.hpp
+        include/public/LibGraphics/utils/Converter.hpp
 
-        include/LibGraphics/Image.hpp
-        include/LibGraphics.hpp
+        include/public/LibGraphics/Image.hpp
+        include/public/LibGraphics/LibGraphics.hpp
 
         src/opencv_info.cpp
         src/ocr/OcrTextReader.cpp
@@ -59,9 +59,11 @@ include(Tesseract)
 # ---------------------------------------------------------
 target_include_directories(${PROJECT_NAME}
         PUBLIC
-        ${OpenCV_INCLUDE_DIRS}
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/public>
         $<INSTALL_INTERFACE:include>
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/private
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 
@@ -107,7 +109,7 @@ install(TARGETS LibGraphics
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-install(DIRECTORY include/LibGraphics
+install(DIRECTORY include/public/LibGraphics
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 

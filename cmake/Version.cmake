@@ -1,4 +1,4 @@
-set(VERSION_HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/generated")
+set(VERSION_HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/public/LibGraphics")
 
 set(RELEASE_AUTHOR "Johnny Mast")
 set(RELEASE_VERSION_MAJOR 0)
