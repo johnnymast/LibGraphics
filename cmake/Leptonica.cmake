@@ -1,5 +1,6 @@
 # Leptonica.cmake — Arch Linux version (pkg-config)
 
+#find_package(Leptonica REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LEPT REQUIRED lept)
 

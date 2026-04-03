@@ -87,3 +87,46 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if(LIBGRAPHICS_ENABLE_TESTS)
     include(Testing)
 endif()
+
+# ============================================
+# Install rules for LibGraphics
+# ============================================
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+install(TARGETS LibGraphics
+        EXPORT LibGraphicsTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(DIRECTORY include/LibGraphics
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(EXPORT LibGraphicsTargets
+        FILE LibGraphicsTargets.cmake
+        NAMESPACE LibGraphics::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LibGraphics
+)
+
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/LibGraphicsConfigVersion.cmake"
+        VERSION 1.0.0
+        COMPATIBILITY SameMajorVersion
+)
+
+configure_package_config_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/LibGraphicsConfig.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/LibGraphicsConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LibGraphics
+)
+
+install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/LibGraphicsConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/LibGraphicsConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LibGraphics
+)
