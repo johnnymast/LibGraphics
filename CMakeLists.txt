@@ -69,7 +69,7 @@ target_include_directories(${PROJECT_NAME}
 # Linking
 # ---------------------------------------------------------
 target_link_libraries(${PROJECT_NAME}
-        PUBLIC
+        PRIVATE
         ${OpenCV_LINK_LIBRARIES}
         Tesseract::Tesseract
         Leptonica::Leptonica
