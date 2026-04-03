@@ -75,6 +75,8 @@ target_link_libraries(${PROJECT_NAME}
         Leptonica::Leptonica
 )
 
+
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBGRAPHICS_EXPORTS)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
