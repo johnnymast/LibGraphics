@@ -50,7 +50,7 @@ add_library(${PROJECT_NAME} SHARED
 # Dependencies
 # ---------------------------------------------------------
 include(Version)
-include(OpenCV)
+include(OpenCV-LG)
 include(Leptonica)
 include(Tesseract)
 
