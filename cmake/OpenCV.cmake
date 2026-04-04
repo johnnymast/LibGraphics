@@ -30,6 +30,7 @@ if(WIN32)
     )
 
 elseif(UNIX)
+    set(CUDAToolkit_ROOT "/opt/cuda")
     find_package(OpenCV REQUIRED)
 
     set(OpenCV_INCLUDE_DIRS
