@@ -90,7 +90,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Tests
 # ---------------------------------------------------------
 if(LIBGRAPHICS_ENABLE_TESTS)
-#    include(Testing)
+    include(Testing)
 endif()
 
 # ============================================

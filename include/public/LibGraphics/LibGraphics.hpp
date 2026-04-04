@@ -23,5 +23,5 @@ namespace LibGraphics {
         bool cuda_supported{false};
     };
 
-    OpenCVInfo GetOpenCVInfo();
+    LIBGRAPHICS_API OpenCVInfo GetOpenCVInfo();
 }

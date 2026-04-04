@@ -13,3 +13,4 @@ target_include_directories(Leptonica::Leptonica INTERFACE
 target_link_libraries(Leptonica::Leptonica INTERFACE
         ${LEPT_LIBRARIES}
 )
+
