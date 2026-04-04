@@ -34,7 +34,6 @@ add_library(${PROJECT_NAME} SHARED
         include/public/LibGraphics/Image.hpp
         include/public/LibGraphics/LibGraphics.hpp
 
-        src/opencv_info.cpp
         src/ocr/OcrTextReader.cpp
         src/match/TemplateMatcher.cpp
         src/match/MatchResult.cpp
