@@ -14,11 +14,11 @@ if(UNIX)
 endif()
 
 target_include_directories(LibGraphics
-        PRIVATE
+        PUBLIC
         ${OpenCV_INCLUDE_DIRS}
 )
 
 target_link_libraries(LibGraphics
-        PRIVATE
+        PUBLIC
         ${OpenCV_LIBRARIES}
 )
