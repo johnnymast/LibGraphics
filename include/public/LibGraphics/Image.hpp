@@ -50,7 +50,7 @@ namespace LibGraphics {
             auto now = std::chrono::system_clock::now().time_since_epoch().count();
             std::ostringstream oss;
             oss << prefix << now << ext;
-            return std::filesystem::temp_directory_path() / oss.str();
+            return (std::filesystem::temp_directory_path() / oss.str()).string();
         }
 
         static void stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels);

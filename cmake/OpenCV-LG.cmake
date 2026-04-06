@@ -1,17 +1,14 @@
 message(STATUS "Linking OpenCV")
-if(CMAKE_TOOLCHAIN_FILE MATCHES "vcpkg.cmake")
-    find_package(OpenCV CONFIG REQUIRED)
-endif()
 
-if(WIN32)
-    set(OpenCV_DIR "C:/opencv/build/x64/vc16/lib")
+if (WIN32)
+    set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv4")
     find_package(OpenCV REQUIRED)
-endif()
+endif ()
 
-if(UNIX)
+if (UNIX)
     set(CUDAToolkit_ROOT "/opt/cuda")
     find_package(OpenCV REQUIRED)
-endif()
+endif ()
 
 target_include_directories(LibGraphics
         PUBLIC

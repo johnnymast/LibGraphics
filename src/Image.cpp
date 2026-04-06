@@ -1,5 +1,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#define _CRT_SECURE_NO_WARNINGS
 
 #include "LibGraphics/Image.hpp"
 #include "LibGraphics/modules/stb_image_write.hpp"
@@ -8,6 +9,16 @@
 #include <opencv2/opencv.hpp>
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
+#include <filesystem>
+#include <limits>
+#include <cstdlib>
+
+#ifdef _WIN32
+#define NOMINMAX
+#include <windows.h>
+#include <shellapi.h>
+#endif
 
 namespace LibGraphics {
 
@@ -148,8 +159,15 @@ namespace LibGraphics {
         if (result != 0) {
             std::cerr << "[Image::show] Failed to open image with xdg-open\n";
         }
+
 #elif defined(_WIN32)
-        ShellExecuteA(nullptr, "open", temp_path.c_str(), nullptr, nullptr, SW_SHOW);
+        std::wstring wpath = std::filesystem::path(temp_path).wstring();
+        HINSTANCE result = ShellExecuteW(nullptr, L"open", wpath.c_str(), nullptr, nullptr, SW_SHOW);
+
+        if ((INT_PTR)result <= 32) {
+            std::cerr << "[Image::show] Failed to open image on Windows\n";
+        }
+
 #else
         std::cerr << "[Image::show] Image preview not supported on this platform\n";
 #endif
