@@ -7,8 +7,9 @@ Deze handleiding legt uit hoe je LibGraphics (of elke C++ library) correct bouwt
 - MSVC v143
 - Windows SDK (automatisch geïnstalleerd)
 - vcpkg (x64-windows)
+- Visual Studio generator (GEEN Ninja)
 
-Dit is de enige configuratie die 100% werkt met OpenCV, Tesseract en Leptonica.
+Dit is de enige configuratie die 100% stabiel werkt met OpenCV, Tesseract en Leptonica.
 
 ------------------------------------------------------------
 1. Installeer Visual Studio 2022 Community
@@ -23,7 +24,8 @@ Dit installeert automatisch:
 - MSVC v143 compiler
 - Windows SDK (10 of 11)
 - CMake tools
-- Ninja
+- NMake Makefiles
+- Visual Studio generator
 - Alle benodigde headers en libs
 
 Je hoeft geen individuele SDK’s meer te selecteren.
@@ -62,8 +64,11 @@ Selecteer:
 CLion detecteert automatisch:
 
 - Windows SDK
-- Ninja
 - MSVC toolchain
+
+⚠ BELANGRIJK:
+CLion gebruikt standaard Ninja, maar Ninja veroorzaakt op Windows timestamp-bugs.
+Daarom gebruiken we de Visual Studio generator.
 
 ------------------------------------------------------------
 4. Configureer CMake in CLion
@@ -73,11 +78,13 @@ Ga naar:
 
     Settings → Build, Execution, Deployment → CMake
 
-Voeg toe:
+Stel in:
 
-    -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+- Generator: **Visual Studio 17 2022**
+- Toolchain: Visual Studio
+- CMake options:
 
-Selecteer de Visual Studio toolchain.
+      -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 ------------------------------------------------------------
 5. Verwijder oude build-mappen
@@ -88,6 +95,7 @@ Verwijder:
     cmake-build-debug/
     cmake-build-release/
     cmake-build-debug-visual-studio/
+    build/   (als je die handmatig hebt gemaakt)
 
 ------------------------------------------------------------
 6. Builden
@@ -105,7 +113,24 @@ Je krijgt:
 - ✔ Tesseract gevonden
 - ✔ LibGraphics.dll gebouwd
 
-Alleen een onschuldige warning uit stb_image_write (normaal op Windows).
+------------------------------------------------------------
+Install (Als Administrator)
+------------------------------------------------------------
+
+Ga naar de CLion build-map:
+
+    cd Graphics/cmake-build-debug-visual-studio
+
+Voer uit:
+
+    cmake --install . --prefix "C:/Program Files/LibGraphics"
+
+Dit installeert:
+
+- C:/Program Files/LibGraphics/bin/LibGraphics.dll
+- C:/Program Files/LibGraphics/lib/LibGraphics.lib
+- C:/Program Files/LibGraphics/include/LibGraphics/...
+- C:/Program Files/LibGraphics/lib/cmake/LibGraphics/LibGraphicsConfig.cmake
 
 ------------------------------------------------------------
 Klaar
@@ -113,6 +138,7 @@ Klaar
 
 Je hoeft dus geen Windows 10 SDK meer te selecteren.
 Je hoeft geen Desktop SDK meer te zoeken.
+Je hoeft geen Ninja te gebruiken (sterker nog: niet doen).
 Je hoeft geen individuele componenten meer aan te vinken.
 
 Alleen “Desktop development with C++” is genoeg.
