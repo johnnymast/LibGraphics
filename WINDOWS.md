@@ -1,6 +1,6 @@
-# Windows Build Tutorial (CLion + Visual Studio + vcpkg)
+# Windows Build Tutorial (CLion + Visual Studio + vcpkg) — LibGraphics
 
-Deze handleiding legt uit hoe je LibGraphics (of elke C++ library) correct bouwt op Windows met:
+Deze handleiding legt uit hoe je LibGraphics correct bouwt op Windows met:
 
 - CLion
 - Visual Studio 2022 Community
@@ -9,11 +9,11 @@ Deze handleiding legt uit hoe je LibGraphics (of elke C++ library) correct bouwt
 - vcpkg (x64-windows)
 - Visual Studio generator (GEEN Ninja)
 
-Dit is de enige configuratie die 100% stabiel werkt met OpenCV, Tesseract en Leptonica.
+Dit is de enige configuratie die 100% stabiel werkt met OpenCV4, Tesseract en Leptonica.
 
-------------------------------------------------------------
-1. Installeer Visual Studio 2022 Community
-------------------------------------------------------------
+============================================================
+1. Installeer Visual Studio 2022
+   ============================================================
 
 Open de Visual Studio Installer en vink slechts één workload aan:
 
@@ -26,17 +26,16 @@ Dit installeert automatisch:
 - CMake tools
 - NMake Makefiles
 - Visual Studio generator
-- Alle benodigde headers en libs
 
-Je hoeft geen individuele SDK’s meer te selecteren.
+Je hoeft geen individuele SDK’s of extra componenten te selecteren.
 
-------------------------------------------------------------
+============================================================
 2. Installeer vcpkg
-------------------------------------------------------------
+   ============================================================
 
-    git clone https://github.com/microsoft/vcpkg
-    cd vcpkg
-    bootstrap-vcpkg.bat
+   git clone https://github.com/microsoft/vcpkg
+   cd vcpkg
+   bootstrap-vcpkg.bat
 
 Installeer dependencies:
 
@@ -45,15 +44,19 @@ Installeer dependencies:
     vcpkg install leptonica:x64-windows
     vcpkg install tesseract-data
 
-------------------------------------------------------------
+Belangrijk:
+- Gebruik **opencv4**, niet `opencv`.
+- Windows gebruikt libs zonder “4”-suffix, dit is normaal.
+
+============================================================
 3. Configureer CLion Toolchain
-------------------------------------------------------------
+   ============================================================
 
 Ga naar:
 
     File → Settings → Build, Execution, Deployment → Toolchains
 
-Selecteer:
+Stel in:
 
 - Toolchain: Visual Studio
 - C Compiler: cl.exe
@@ -67,12 +70,11 @@ CLion detecteert automatisch:
 - MSVC toolchain
 
 ⚠ BELANGRIJK:
-CLion gebruikt standaard Ninja, maar Ninja veroorzaakt op Windows timestamp-bugs.
-Daarom gebruiken we de Visual Studio generator.
+Gebruik GEEN Ninja generator — Ninja veroorzaakt timestamp- en include‑path‑bugs op Windows.
 
-------------------------------------------------------------
+============================================================
 4. Configureer CMake in CLion
-------------------------------------------------------------
+   ============================================================
 
 Ga naar:
 
@@ -86,20 +88,21 @@ Stel in:
 
       -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
 
-------------------------------------------------------------
+============================================================
 5. Verwijder oude build-mappen
-------------------------------------------------------------
+   ============================================================
 
 Verwijder:
 
     cmake-build-debug/
     cmake-build-release/
     cmake-build-debug-visual-studio/
-    build/   (als je die handmatig hebt gemaakt)
+    cmake-build-release-visual-studio/
+    build/
 
-------------------------------------------------------------
+============================================================
 6. Builden
-------------------------------------------------------------
+   ============================================================
 
 Klik:
 
@@ -108,14 +111,16 @@ Klik:
 
 Je krijgt:
 
-- ✔ OpenCV gevonden
+- ✔ OpenCV4 gevonden
 - ✔ Leptonica gevonden
 - ✔ Tesseract gevonden
+- ✔ MSVC toolchain gevonden
+- ✔ Windows SDK gevonden
 - ✔ LibGraphics.dll gebouwd
 
-------------------------------------------------------------
-Install (Als Administrator)
-------------------------------------------------------------
+============================================================
+7. Installeren (Administrator)
+   ============================================================
 
 Ga naar de CLion build-map:
 
@@ -132,13 +137,13 @@ Dit installeert:
 - C:/Program Files/LibGraphics/include/LibGraphics/...
 - C:/Program Files/LibGraphics/lib/cmake/LibGraphics/LibGraphicsConfig.cmake
 
-------------------------------------------------------------
+============================================================
 Klaar
-------------------------------------------------------------
+============================================================
 
-Je hoeft dus geen Windows 10 SDK meer te selecteren.
-Je hoeft geen Desktop SDK meer te zoeken.
+Je hoeft dus geen Windows 10 SDK handmatig te selecteren.
+Je hoeft geen Desktop SDK te zoeken.
 Je hoeft geen Ninja te gebruiken (sterker nog: niet doen).
-Je hoeft geen individuele componenten meer aan te vinken.
+Je hoeft geen individuele componenten aan te vinken.
 
 Alleen “Desktop development with C++” is genoeg.

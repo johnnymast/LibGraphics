@@ -55,6 +55,7 @@ include(OpenCV-LG)
 include(Leptonica)
 include(Tesseract)
 
+
 # ---------------------------------------------------------
 # Include directories
 # ---------------------------------------------------------
