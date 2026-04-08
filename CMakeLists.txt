@@ -51,10 +51,10 @@ if (MSVC)
     target_compile_options(LibGraphics PRIVATE /wd4251)
 endif()
 
-include(Version)
-include(Leptonica)
-include(Tesseract)
-include(OpenCV-LG)
+include(Leptonica-LibGraphics)
+include(Tesseract-LibGraphics)
+include(OpenCV-LibGraphics)
+include(Version-LibGraphics)
 
 target_include_directories(LibGraphics
         PUBLIC
@@ -82,7 +82,7 @@ set_target_properties(LibGraphics PROPERTIES
 )
 
 if(LIBGRAPHICS_ENABLE_TESTS)
-    include(Testing)
+    include(Testing-LibGraphics)
 endif()
 
 include(GNUInstallDirs)
