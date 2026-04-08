@@ -7,18 +7,15 @@
 #include <vector>
 #include <filesystem>
 #include <chrono>
-#include <sstream>
 #include <array>
+#include <sstream>
 
 #include "export.hpp"
 
 using LibGraphics::Type::Rect;
-using std::vector;
-
 
 namespace LibGraphics {
-    class LIBGRAPHICS_API Image {
-    public:
+    struct LIBGRAPHICS_API Image {
         std::vector<uint8_t> data;
         int width = 0;
         int height = 0;
@@ -29,7 +26,7 @@ namespace LibGraphics {
         Image() = default;
 
         // Enige constructor die we implementeren in Image.cpp
-        Image(int width, int height, int channels, vector<uint8_t> pixels);
+        Image(int width, int height, int channels, std::vector<uint8_t> pixels);
 
         // Loading
         static Image load(const std::string &path);
@@ -64,16 +61,15 @@ namespace LibGraphics {
         void redact(const std::vector<Type::Rect> &rois, uint8_t value = 0);
 
     private:
-        static std::string mkTempFilename( const std::string &prefix,  const std::string &ext);
-        // static std::string mkTempFilename(
-        //     const std::string &prefix = "libgraphics_",
-        //     const std::string &ext = ".png"
-        // ) {
-        //     auto now = std::chrono::system_clock::now().time_since_epoch().count();
-        //     std::ostringstream oss;
-        //     oss << prefix << now << ext;
-        //     return (std::filesystem::temp_directory_path() / oss.str()).string();
-        // }
+        static std::string mkTempFilename(
+            const std::string &prefix = "libgraphics_",
+            const std::string &ext = ".png"
+        ) {
+            auto now = std::chrono::system_clock::now().time_since_epoch().count();
+            std::ostringstream oss;
+            oss << prefix << now << ext;
+            return (std::filesystem::temp_directory_path() / oss.str()).string();
+        }
 
         static void stripAlpha(std::vector<uint8_t> &pixels, int width, int height, int &channels);
     };

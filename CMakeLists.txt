@@ -47,6 +47,10 @@ add_library(LibGraphics SHARED
         src/Image.cpp
 )
 
+if (MSVC)
+    target_compile_options(LibGraphics PRIVATE /wd4251)
+endif()
+
 include(Version)
 include(Leptonica)
 include(Tesseract)

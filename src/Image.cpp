@@ -21,16 +21,6 @@
 
 namespace LibGraphics {
 
-    std::string Image::mkTempFilename(
-        const std::string &prefix = "libgraphics_",
-        const std::string &ext = ".png"
-    ) {
-        auto now = std::chrono::system_clock::now().time_since_epoch().count();
-        std::ostringstream oss;
-        oss << prefix << now << ext;
-        return (std::filesystem::temp_directory_path() / oss.str()).string();
-    }
-
     // Remove alpha channel if present
     void Image::stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels) {
         if (channels == 4) {
@@ -49,7 +39,7 @@ namespace LibGraphics {
     }
 
     // The ONLY constructor declared in the header
-    Image::Image(const int width, const int height, const int channels, vector<uint8_t> pixels): width(width), height(height), channels(channels)
+    Image::Image(const int width, const int height, const int channels, std::vector<uint8_t> pixels): width(width), height(height), channels(channels)
     {
         if (width <= 0 || height <= 0 || channels <= 0) {
             throw std::invalid_argument("[Image] Invalid dimensions or channel count");

@@ -14,7 +14,7 @@ namespace LibGraphics::Match {
             const int y = 0,
             const int width = 0,
             const int height = 0,
-            const float score = 0.0f): X(x), Y(y), Width(width), Height(height), Score(score) {}
+            const double score = 0.0f): X(x), Y(y), Width(width), Height(height), Score(score) {}
 
         [[nodiscard]] MatchResult Center() const;
     };

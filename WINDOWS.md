@@ -128,7 +128,8 @@ Ga naar de CLion build-map:
 
 Voer uit:
 
-    cmake --install . --prefix "C:/Program Files/LibGraphics"
+    cmake --install . --config Release --prefix "C:/Program Files/LibGraphics"
+
 
 Dit installeert:
 

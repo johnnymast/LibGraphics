@@ -98,7 +98,7 @@ MatchResult TemplateMatcher::matchTemplateSingle(
         }
     }
 
-    return MatchResult(matchLoc.x, matchLoc.y, templateMat.cols, templateMat.rows, score);
+    return MatchResult((int)matchLoc.x, (int)matchLoc.y, templateMat.cols, templateMat.rows, score);
 }
 
 // Find all occurrences above threshold

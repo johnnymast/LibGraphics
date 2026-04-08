@@ -48,7 +48,7 @@ namespace LibGraphics::Ocr {
             api->End();
             delete api;
             pixDestroy(&pix);
-        } catch (const std::exception &e) {
+        } catch (const std::exception &) {
             if (api) {
                 api->End();
                 delete api;
