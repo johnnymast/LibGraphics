@@ -1,25 +1,20 @@
+
 message(STATUS "Linking OpenCV")
 
-if (WIN32)
-    find_package(OpenCV REQUIRED)
-endif ()
-
-if (UNIX)
-    set(CUDAToolkit_ROOT "/opt/cuda")
-    find_package(OpenCV REQUIRED)
-endif ()
+find_package(OpenCV REQUIRED)
 
 target_include_directories(LibGraphics
         PUBLIC
         ${OpenCV_INCLUDE_DIRS}
 )
 
-target_link_libraries(LibGraphics
+target_link_directories(LibGraphics
         PUBLIC
-        opencv_core
-        opencv_imgproc
-        opencv_highgui
-        opencv_imgcodecs
-        opencv_videoio
-        opencv_calib3d
+        ${OpenCV_LIBRARY_DIRS}
 )
+
+message(STATUS "=== LibCore OpenCV Debug ===")
+message(STATUS "OpenCV_DIR: ${OpenCV_DIR}")
+message(STATUS "OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
+message(STATUS "OpenCV_LIBRARIES: ${OpenCV_LIBRARIES}")
+message(STATUS "============================")

@@ -10,49 +10,71 @@
 #include <sstream>
 #include <array>
 
+#include "export.hpp"
+
 using LibGraphics::Type::Rect;
+using std::vector;
+
 
 namespace LibGraphics {
-
-    struct Image {
+    class LIBGRAPHICS_API Image {
+    public:
         std::vector<uint8_t> data;
         int width = 0;
         int height = 0;
-        int channels = 0;   // altijd 1 (grayscale) of 3 (RGB)
+        int channels = 0; // 1 = grayscale, 3 = RGB
         std::string origin = "empty";
 
+        // Image() = default;
         Image() = default;
-        Image(int width, int height, int channels, std::vector<uint8_t> pixels);
 
+        // Enige constructor die we implementeren in Image.cpp
+        Image(int width, int height, int channels, vector<uint8_t> pixels);
+
+        // Loading
         static Image load(const std::string &path);
-        static Image load_from_memory(const uint8_t* buffer, size_t size);
-        static Image load_from_memory(const std::vector<uint8_t>& buffer);
+        static Image load_from_memory(const uint8_t *buffer, size_t size);
+        static Image load_from_memory(const std::vector<uint8_t> &buffer);
 
-        bool save(const std::string &path, int quality = 90) const;
+        // Saving + preview
+        [[nodiscard]] bool save(const std::string &path, int quality = 90) const;
+
         void show() const;
 
-        Image toGrayscale() const;
+        // Transformations
+        [[nodiscard]] Image toGrayscale() const;
 
-        [[nodiscard]] std::array<uint8_t, 3> getRGB(int x, int y) const;
         [[nodiscard]] Image crop(int x, int y, int width, int height) const;
-        [[nodiscard]] bool isValid() const;
+
         [[nodiscard]] Image clone() const;
 
-        void redact(const Type::Rect& roi, uint8_t value = 0);
-        void redact(const std::vector<Type::Rect>& rois, uint8_t value = 0);
+        // Info
+        [[nodiscard]] std::array<uint8_t, 3> getRGB(int x, int y) const;
 
+        [[nodiscard]] bool isValid() const;
+
+        // Allows: if (image)
         explicit operator bool() const {
             return isValid();
         }
 
-    private:
-        static std::string mkTempFilename(const std::string& prefix = "libgraphics_", const std::string& ext = ".png") {
-            auto now = std::chrono::system_clock::now().time_since_epoch().count();
-            std::ostringstream oss;
-            oss << prefix << now << ext;
-            return (std::filesystem::temp_directory_path() / oss.str()).string();
-        }
+        // Redaction
+        void redact(const Type::Rect &roi, uint8_t value = 0);
 
-        static void stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels);
+        void redact(const std::vector<Type::Rect> &rois, uint8_t value = 0);
+
+    private:
+        static std::string mkTempFilename( const std::string &prefix,  const std::string &ext);
+        // static std::string mkTempFilename(
+        //     const std::string &prefix = "libgraphics_",
+        //     const std::string &ext = ".png"
+        // ) {
+        //     auto now = std::chrono::system_clock::now().time_since_epoch().count();
+        //     std::ostringstream oss;
+        //     oss << prefix << now << ext;
+        //     return (std::filesystem::temp_directory_path() / oss.str()).string();
+        // }
+
+        static void stripAlpha(std::vector<uint8_t> &pixels, int width, int height, int &channels);
     };
 }

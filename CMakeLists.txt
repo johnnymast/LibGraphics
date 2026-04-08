@@ -10,10 +10,10 @@ option(LIBGRAPHICS_ENABLE_TESTS "Build LibGraphics test suite" OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# ---------------------------------------------------------
-# Library sources
-# ---------------------------------------------------------
-add_library(${PROJECT_NAME} SHARED
+
+# Project titles naar LibGraphics
+
+add_library(LibGraphics SHARED
         include/private/LibGraphics/modules/stb_image.hpp
         include/private/LibGraphics/modules/stb_image_write.hpp
         include/public/LibGraphics/exceptions/LowConfidenceException.hpp
@@ -47,19 +47,12 @@ add_library(${PROJECT_NAME} SHARED
         src/Image.cpp
 )
 
-# ---------------------------------------------------------
-# Dependencies
-# ---------------------------------------------------------
 include(Version)
-include(OpenCV-LG)
 include(Leptonica)
 include(Tesseract)
+include(OpenCV-LG)
 
-
-# ---------------------------------------------------------
-# Include directories
-# ---------------------------------------------------------
-target_include_directories(${PROJECT_NAME}
+target_include_directories(LibGraphics
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/public>
         $<INSTALL_INTERFACE:include>
@@ -69,36 +62,24 @@ target_include_directories(${PROJECT_NAME}
 )
 
 
-# ---------------------------------------------------------
-# Linking
-# ---------------------------------------------------------
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(LibGraphics
         PRIVATE
-        ${OpenCV_LINK_LIBRARIES}
         Tesseract::Tesseract
         Leptonica::Leptonica
+        ${OpenCV_LIBS}
 )
 
+target_compile_definitions(LibGraphics PRIVATE LIBGRAPHICS_EXPORTS)
 
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE LIBGRAPHICS_EXPORTS)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(LibGraphics PROPERTIES
         OUTPUT_NAME "${PROJECT_NAME}"
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
 )
 
-# ---------------------------------------------------------
-# Tests
-# ---------------------------------------------------------
 if(LIBGRAPHICS_ENABLE_TESTS)
     include(Testing)
 endif()
-
-# ============================================
-# Install rules for LibGraphics
-# ============================================
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
