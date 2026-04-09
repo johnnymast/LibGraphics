@@ -2,12 +2,16 @@
 
 #include <opencv2/core/version.hpp>
 
+#ifdef OPENCV_WITH_CUDA
+#include <opencv2/core/cuda.hpp>
+#endif
+
 namespace LibGraphics {
     OpenCVInfo GetOpenCVInfo() {
 
         bool haveCuda = false;
 
-#if defined(HAVE_OPENCV_CUDAARITHM)
+#if defined(OPENCV_WITH_CUDA)
         if (cv::cuda::getCudaEnabledDeviceCount() > 0) {
             haveCuda = true;
         }
