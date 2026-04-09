@@ -1,0 +1,6 @@
+/.idea/
+include/generated/
+
+build/*
+!build/
+!build/.gitkeep
