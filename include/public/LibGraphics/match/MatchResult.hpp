@@ -1,7 +1,9 @@
 #pragma once
 
+#include "LibGraphics/export.hpp"
+
 namespace LibGraphics::Match {
-    class MatchResult {
+    class LIBGRAPHICS_API MatchResult {
     public:
         int X = 0;
         int Y = 0;

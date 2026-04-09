@@ -1,3 +1,4 @@
+message(STATUS "🔨 Linking Tesseract")
 include(FetchContent)
 
 # Catch2 v3

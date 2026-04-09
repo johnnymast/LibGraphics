@@ -1,9 +1,10 @@
 #pragma once
 
+#include "LibGraphics/export.hpp"
 #include <opencv2/imgproc.hpp>
 
 namespace LibGraphics::Match {
-    struct MatchOptions {
+    struct LIBGRAPHICS_API MatchOptions {
         double minConfidence = 0.0;  // Minimum confidence threshold (0.0 to 1.0)
 
         MatchOptions() = default;

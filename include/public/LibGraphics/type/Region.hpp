@@ -1,7 +1,9 @@
 #pragma once
 
+#include "LibGraphics/export.hpp"
+
 namespace LibGraphics::Type {
-    class Region {
+    class LIBGRAPHICS_API Region {
     public:
         int X = 0;
         int Y = 0;

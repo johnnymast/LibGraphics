@@ -1,12 +1,13 @@
 #pragma once
 
 #include "LibGraphics/Image.hpp"
+#include "LibGraphics/export.hpp"
 #include "LibGraphics/match/MatchResult.hpp"
 #include "LibGraphics/match/MatchOptions.hpp"
 
 namespace LibGraphics::Match {
 
-    class TemplateMatcher {
+    class LIBGRAPHICS_API TemplateMatcher {
     public:
         // Find single best match in target image
         static MatchResult matchTemplateSingle(

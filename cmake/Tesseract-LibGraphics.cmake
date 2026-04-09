@@ -1,3 +1,5 @@
+message(STATUS "  🔨 Linking Unit tests")
+
 if (WIN32)
     # Windows (vcpkg): use TesseractConfig.cmake
     find_package(Tesseract CONFIG REQUIRED)

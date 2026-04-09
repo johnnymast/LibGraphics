@@ -1,19 +1,20 @@
 #pragma once
+#include "LibGraphics/export.hpp"
 #include <algorithm>
 
 namespace LibGraphics::Type {
 
-    struct Rect {
+    struct LIBGRAPHICS_API Rect {
         int X;
         int Y;
         int Width;
         int Height;
 
-        bool contains(int px, int py) const {
+        [[nodiscard]] bool contains(int px, int py) const {
             return px >= X && px < X + Width && py >= Y && py < Y + Height;
         }
 
-        int area() const {
+        [[nodiscard]] int area() const {
             return Width * Height;
         }
 

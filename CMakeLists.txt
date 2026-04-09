@@ -56,6 +56,10 @@ include(Tesseract-LibGraphics)
 include(OpenCV-LibGraphics)
 include(Version-LibGraphics)
 
+if (SPARKLE_SUPERBUILD)
+    message(STATUS "❤️  ${PROJECT_NAME} USING Superbuild")
+endif ()
+
 target_include_directories(LibGraphics
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/public>

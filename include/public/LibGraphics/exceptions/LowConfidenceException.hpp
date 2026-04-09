@@ -1,10 +1,11 @@
 #pragma once
 
+#include "LibGraphics/export.hpp"
 #include <stdexcept>
 
 namespace LibGraphics::Exceptions {
 
-    class LowConfidenceException : public std::runtime_error {
+    class LIBGRAPHICS_API LowConfidenceException : public std::runtime_error {
     public:
         LowConfidenceException(double confidence, double minConfidence)
             : std::runtime_error("Match confidence " + std::to_string(confidence) +

@@ -1,3 +1,4 @@
+message(STATUS "  🔨 Linking Leptonica")
 if (WIN32)
     # Windows (vcpkg): use LeptonicaConfig.cmake
     find_package(Leptonica CONFIG REQUIRED)
