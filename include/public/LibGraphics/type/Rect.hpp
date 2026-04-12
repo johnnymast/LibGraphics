@@ -1,5 +1,6 @@
 #pragma once
 #include "LibGraphics/export.hpp"
+
 #include <algorithm>
 
 namespace LibGraphics::Type {

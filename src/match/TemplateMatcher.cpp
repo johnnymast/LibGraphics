@@ -19,13 +19,13 @@ using LibGraphics::Exceptions::LowConfidenceException;
 static double normalizeScore(double score, int matchMethod) {
     // For SQDIFF methods, lower is better, so invert the score
     if (matchMethod == cv::TM_SQDIFF || matchMethod == cv::TM_SQDIFF_NORMED) {
-        return 1.0 - score;  // Convert to higher-is-better
+        return 1.0 - score; // Convert to higher-is-better
     }
     return score;
 }
 
 // Helper function to ensure images have compatible formats for template matching
-static void ensureCompatibleFormats(cv::Mat& query, cv::Mat& target) {
+static void ensureCompatibleFormats(cv::Mat &query, cv::Mat &target) {
     // Both images must have the same depth (8-bit or 32-bit float)
     if (query.depth() != target.depth()) {
         if (query.depth() == CV_8U && target.depth() == CV_32F) {
@@ -61,9 +61,9 @@ static void ensureCompatibleFormats(cv::Mat& query, cv::Mat& target) {
 
 // Main implementation with options
 MatchResult TemplateMatcher::matchTemplateSingle(
-    const Image& match_template,
-    const Image& match_target,
-    const MatchOptions& options
+    const Image &match_template,
+    const Image &match_target,
+    const MatchOptions &options
 ) {
     cv::Mat templateMat = Converter::ImageToMat(match_template);
     cv::Mat targetMat = Converter::ImageToMat(match_target);
@@ -92,20 +92,23 @@ MatchResult TemplateMatcher::matchTemplateSingle(
 
     // Check minimum confidence
     if (options.minConfidence > 0.0) {
-        double normalizedScore = normalizeScore(score, matchMethod);
-        if (normalizedScore < options.minConfidence) {
+        const double normalizedScore = normalizeScore(score, matchMethod);
+        const bool gotMatch = (normalizedScore >= options.minConfidence);
+
+        // It cannot be lower than the min but it can be higher.
+        if (!gotMatch) {
             throw LowConfidenceException(normalizedScore, options.minConfidence);
         }
     }
 
-    return MatchResult((int)matchLoc.x, (int)matchLoc.y, templateMat.cols, templateMat.rows, score);
+    return MatchResult((int) matchLoc.x, (int) matchLoc.y, templateMat.cols, templateMat.rows, score);
 }
 
 // Find all occurrences above threshold
 std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
-    const Image& match_template,
-    const Image& match_target,
-    const MatchOptions& options
+    const Image &match_template,
+    const Image &match_target,
+    const MatchOptions &options
 ) {
     std::vector<MatchResult> results;
     cv::Mat templateMat = Converter::ImageToMat(match_template);
@@ -158,9 +161,10 @@ std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
 
         // Check if this match meets the threshold
         double normalizedScore = normalizeScore(score, matchMethod);
+        const bool gotMatch = (normalizedScore >= options.minConfidence);
 
-        if (normalizedScore < threshold) {
-            break; // No more matches above threshold
+        if (!gotMatch) {
+            break;
         }
 
         // Add this match
