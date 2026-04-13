@@ -92,10 +92,11 @@ MatchResult TemplateMatcher::matchTemplateSingle(
 
     // Check minimum confidence
     if (options.minConfidence > 0.0) {
+        static constexpr double EPS = 1e-6;
         const double normalizedScore = normalizeScore(score, matchMethod);
-        const bool gotMatch = (normalizedScore >= options.minConfidence);
+        const bool gotMatch = (normalizedScore + EPS >= options.minConfidence);
 
-        // It cannot be lower than the min but it can be higher.
+        // It cannot be lower than the min, but it can be higher.
         if (!gotMatch) {
             throw LowConfidenceException(normalizedScore, options.minConfidence);
         }
@@ -160,8 +161,9 @@ std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
         cv::Point matchLoc = invertThreshold ? minLoc : maxLoc;
 
         // Check if this match meets the threshold
+        static constexpr double EPS = 1e-6; // Fix a rounding engine bug
         double normalizedScore = normalizeScore(score, matchMethod);
-        const bool gotMatch = (normalizedScore >= options.minConfidence);
+        const bool gotMatch = (normalizedScore + EPS >= options.minConfidence);
 
         if (!gotMatch) {
             break;
