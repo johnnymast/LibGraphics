@@ -489,6 +489,10 @@ TEST_CASE("Redact multiple regions", "[Image][redact]") {
     REQUIRE(untouched[0] == 255);
 }
 
+//
+// FIXED mat() TESTS + NEW matGray() TESTS
+//
+
 TEST_CASE("Image::mat returns valid cv::Mat", "[Image][mat]") {
     std::vector<uint8_t> pixels = {
         255, 0, 0,
@@ -503,7 +507,7 @@ TEST_CASE("Image::mat returns valid cv::Mat", "[Image][mat]") {
 
     REQUIRE(m.rows == 2);
     REQUIRE(m.cols == 2);
-    REQUIRE(m.type() == CV_8UC1); // wordt grayscale
+    REQUIRE(m.type() == CV_8UC3); // kleur, geen grayscale meer
 }
 
 TEST_CASE("Image::mat caches result", "[Image][mat][cache]") {
@@ -521,29 +525,12 @@ TEST_CASE("Image::mat cache invalidates after redact", "[Image][mat][cache]") {
     Image img(4, 4, 3, pixels);
 
     cv::Mat& before = img.mat();
-    REQUIRE(before.at<uint8_t>(0, 0) == 255);
+    REQUIRE(before.at<cv::Vec3b>(0, 0)[0] == 255);
 
     img.redact(Rect{0, 0, 1, 1}, 0);
 
     cv::Mat& after = img.mat();
-    REQUIRE(after.at<uint8_t>(0, 0) == 0);
-}
-
-TEST_CASE("Image::mat grayscale conversion matches toGrayscale", "[Image][mat][grayscale]") {
-    std::vector<uint8_t> pixels = {
-        10, 20, 30,
-        40, 50, 60
-    };
-
-    Image img(1, 2, 3, pixels);
-
-    Image gray = img.toGrayscale();
-    cv::Mat& m = img.mat();
-
-    REQUIRE(m.rows == 2);
-    REQUIRE(m.cols == 1);
-    REQUIRE(m.at<uint8_t>(0, 0) == gray.data[0]);
-    REQUIRE(m.at<uint8_t>(1, 0) == gray.data[1]);
+    REQUIRE(after.at<cv::Vec3b>(0, 0)[0] == 0);
 }
 
 TEST_CASE("Image::mat stays consistent after multiple calls and mutations", "[Image][mat][consistency]") {
@@ -551,13 +538,75 @@ TEST_CASE("Image::mat stays consistent after multiple calls and mutations", "[Im
     Image img(3, 3, 3, pixels);
 
     cv::Mat& m1 = img.mat();
-    REQUIRE(m1.at<uint8_t>(0, 0) == 200);
+    REQUIRE(m1.at<cv::Vec3b>(0, 0)[0] == 200);
 
     img.redact(Rect{0, 0, 1, 1}, 50);
 
     cv::Mat& m2 = img.mat();
-    REQUIRE(m2.at<uint8_t>(0, 0) == 50);
+    REQUIRE(m2.at<cv::Vec3b>(0, 0)[0] == 50);
 
     cv::Mat& m3 = img.mat();
     REQUIRE(m3.data == m2.data); // cache blijft geldig
+}
+
+//
+// NEW matGray() TESTS
+//
+
+TEST_CASE("Image::matGray returns grayscale cv::Mat", "[Image][matGray]") {
+    std::vector<uint8_t> pixels = {
+        10, 20, 30,
+        40, 50, 60
+    };
+
+    Image img(1, 2, 3, pixels);
+
+    cv::Mat& gray = img.matGray();
+
+    REQUIRE(gray.rows == 2);
+    REQUIRE(gray.cols == 1);
+    REQUIRE(gray.type() == CV_8UC1);
+
+    Image expected = img.toGrayscale();
+    REQUIRE(gray.at<uint8_t>(0, 0) == expected.data[0]);
+    REQUIRE(gray.at<uint8_t>(1, 0) == expected.data[1]);
+}
+
+TEST_CASE("Image::matGray caches result", "[Image][matGray][cache]") {
+    std::vector<uint8_t> pixels(100 * 100 * 3, 128);
+    Image img(100, 100, 3, pixels);
+
+    cv::Mat& g1 = img.matGray();
+    cv::Mat& g2 = img.matGray();
+
+    REQUIRE(g1.data == g2.data); // exact dezelfde buffer
+}
+
+TEST_CASE("Image::matGray cache invalidates after redact", "[Image][matGray][cache]") {
+    std::vector<uint8_t> pixels(4 * 4 * 3, 255);
+    Image img(4, 4, 3, pixels);
+
+    cv::Mat& before = img.matGray();
+    REQUIRE(before.at<uint8_t>(0, 0) == 255);
+
+    img.redact(Rect{0, 0, 1, 1}, 0);
+
+    cv::Mat& after = img.matGray();
+    REQUIRE(after.at<uint8_t>(0, 0) == 0);
+}
+
+TEST_CASE("Image::matGray stays consistent after multiple calls and mutations", "[Image][matGray][consistency]") {
+    std::vector<uint8_t> pixels(3 * 3 * 3, 200);
+    Image img(3, 3, 3, pixels);
+
+    cv::Mat& g1 = img.matGray();
+    REQUIRE(g1.at<uint8_t>(0, 0) == 200);
+
+    img.redact(Rect{0, 0, 1, 1}, 50);
+
+    cv::Mat& g2 = img.matGray();
+    REQUIRE(g2.at<uint8_t>(0, 0) == 50);
+
+    cv::Mat& g3 = img.matGray();
+    REQUIRE(g3.data == g2.data); // cache blijft geldig
 }

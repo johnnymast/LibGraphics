@@ -6,6 +6,7 @@
 namespace LibGraphics::Match {
     struct LIBGRAPHICS_API MatchOptions {
         double minConfidence = 0.0;  // Minimum confidence threshold (0.0 to 1.0)
+        bool grayscale = false;
 
         MatchOptions() = default;
 

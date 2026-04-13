@@ -15,18 +15,15 @@ using LibGraphics::Match::MatchResult;
 using LibGraphics::Match::MatchOptions;
 using LibGraphics::Exceptions::LowConfidenceException;
 
-// Helper function to normalize score based on match method
 static double normalizeScore(double score, int matchMethod) {
     // For SQDIFF methods, lower is better, so invert the score
     if (matchMethod == cv::TM_SQDIFF || matchMethod == cv::TM_SQDIFF_NORMED) {
-        return 1.0 - score; // Convert to higher-is-better
+        return 1.0 - score;
     }
     return score;
 }
 
-// Helper function to ensure images have compatible formats for template matching
 static void ensureCompatibleFormats(cv::Mat &query, cv::Mat &target) {
-    // Both images must have the same depth (8-bit or 32-bit float)
     if (query.depth() != target.depth()) {
         if (query.depth() == CV_8U && target.depth() == CV_32F) {
             query.convertTo(query, CV_32F);
@@ -65,8 +62,10 @@ MatchResult TemplateMatcher::matchTemplateSingle(
     const Image &match_target,
     const MatchOptions &options
 ) {
-    cv::Mat templateMat = match_template.mat();
-    cv::Mat targetMat = match_target.mat();
+
+    cv::Mat targetMat   = options.grayscale ? match_target.matGray()   : match_target.mat();
+    cv::Mat templateMat = options.grayscale ? match_template.matGray()    : match_template.mat();
+
 
     // Ensure compatible formats
     ensureCompatibleFormats(templateMat, targetMat);
@@ -90,13 +89,11 @@ MatchResult TemplateMatcher::matchTemplateSingle(
                              ? minLoc
                              : maxLoc;
 
-    // Check minimum confidence
     if (options.minConfidence > 0.0) {
         static constexpr double EPS = 1e-6;
         const double normalizedScore = normalizeScore(score, matchMethod);
         const bool gotMatch = (normalizedScore + EPS >= options.minConfidence);
 
-        // It cannot be lower than the min, but it can be higher.
         if (!gotMatch) {
             throw LowConfidenceException(normalizedScore, options.minConfidence);
         }
@@ -178,7 +175,6 @@ std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
         int x2 = std::min(resultCopy.cols, matchLoc.x + windowSize);
         int y2 = std::min(resultCopy.rows, matchLoc.y + windowSize);
 
-        // Set the suppression area to worst possible value
         cv::Rect suppressRect(x1, y1, x2 - x1, y2 - y1);
         if (invertThreshold) {
             resultCopy(suppressRect).setTo(std::numeric_limits<float>::max());

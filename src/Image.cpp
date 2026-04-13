@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <filesystem>
 #include <limits>
+#include <sstream>
+#include <chrono>
 
 #ifdef _WIN32
 #define NOMINMAX
@@ -21,7 +23,20 @@
 
 namespace LibGraphics {
 
-    void Image::stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels) {
+
+    std::string Image::mkTempFilename(const std::string& prefix, const std::string& ext) {
+        auto now = std::chrono::system_clock::now().time_since_epoch().count();
+        std::ostringstream oss;
+        oss << prefix << now << ext;
+        return (std::filesystem::temp_directory_path() / oss.str()).string();
+    }
+
+    void Image::invalidateCache() {
+        cachedColor.release();
+        cachedGray.release();
+    }
+
+    void Image::stripAlpha(std::vector<uint8_t> &pixels, int width, int height, int &channels) {
         if (channels == 4) {
             std::vector<uint8_t> rgb;
             rgb.reserve(static_cast<size_t>(width) * height * 3);
@@ -38,15 +53,12 @@ namespace LibGraphics {
     }
 
     Image::Image(int width, int height, int channels, std::vector<uint8_t> pixels)
-        : width(width), height(height), channels(channels)
-    {
-        if (width <= 0 || height <= 0 || channels <= 0) {
+        : width(width), height(height), channels(channels) {
+        if (width <= 0 || height <= 0 || channels <= 0)
             throw std::invalid_argument("[Image] Invalid dimensions or channel count");
-        }
 
-        if (pixels.size() != static_cast<size_t>(width * height * channels)) {
+        if (pixels.size() != static_cast<size_t>(width * height * channels))
             throw std::invalid_argument("[Image] Pixel buffer size does not match dimensions");
-        }
 
         stripAlpha(pixels, width, height, this->channels);
 
@@ -56,11 +68,10 @@ namespace LibGraphics {
 
     Image Image::load(const std::string &path) {
         int w, h, c;
-        unsigned char* raw = stbi_load(path.c_str(), &w, &h, &c, 0);
+        unsigned char *raw = stbi_load(path.c_str(), &w, &h, &c, 0);
 
-        if (!raw) {
+        if (!raw)
             throw std::runtime_error("Failed to load image: " + path);
-        }
 
         std::vector<uint8_t> pixels(raw, raw + (w * h * c));
         stbi_image_free(raw);
@@ -72,13 +83,12 @@ namespace LibGraphics {
         return img;
     }
 
-    Image Image::load_from_memory(const uint8_t* buffer, size_t size) {
+    Image Image::load_from_memory(const uint8_t *buffer, size_t size) {
         int w = 0, h = 0, c = 0;
-        stbi_uc* raw = stbi_load_from_memory(buffer, static_cast<int>(size), &w, &h, &c, 0);
+        stbi_uc *raw = stbi_load_from_memory(buffer, static_cast<int>(size), &w, &h, &c, 0);
 
-        if (!raw) {
+        if (!raw)
             throw std::runtime_error("[Image::load_from_memory] Failed to decode image");
-        }
 
         std::vector<uint8_t> pixels(raw, raw + (w * h * c));
         stbi_image_free(raw);
@@ -90,7 +100,7 @@ namespace LibGraphics {
         return img;
     }
 
-    Image Image::load_from_memory(const std::vector<uint8_t>& buffer) {
+    Image Image::load_from_memory(const std::vector<uint8_t> &buffer) {
         return load_from_memory(buffer.data(), buffer.size());
     }
 
@@ -100,21 +110,16 @@ namespace LibGraphics {
         std::string ext = path.substr(path.find_last_of('.') + 1);
         int result = 0;
 
-        if (ext == "png" || ext == "PNG") {
+        if (ext == "png" || ext == "PNG")
             result = stbi_write_png(path.c_str(), width, height, channels, data.data(), width * channels);
-        }
-        else if (ext == "jpg" || ext == "jpeg" || ext == "JPG" || ext == "JPEG") {
+        else if (ext == "jpg" || ext == "jpeg" || ext == "JPG" || ext == "JPEG")
             result = stbi_write_jpg(path.c_str(), width, height, channels, data.data(), quality);
-        }
-        else if (ext == "bmp" || ext == "BMP") {
+        else if (ext == "bmp" || ext == "BMP")
             result = stbi_write_bmp(path.c_str(), width, height, channels, data.data());
-        }
-        else if (ext == "tga" || ext == "TGA") {
+        else if (ext == "tga" || ext == "TGA")
             result = stbi_write_tga(path.c_str(), width, height, channels, data.data());
-        }
-        else {
+        else
             result = stbi_write_png(path.c_str(), width, height, channels, data.data(), width * channels);
-        }
 
         return result != 0;
     }
@@ -157,8 +162,8 @@ namespace LibGraphics {
         std::system(("xdg-open \"" + temp + "\"").c_str());
 #elif defined(_WIN32)
         ShellExecuteW(nullptr, L"open",
-            std::filesystem::path(temp).wstring().c_str(),
-            nullptr, nullptr, SW_SHOW);
+                      std::filesystem::path(temp).wstring().c_str(),
+                      nullptr, nullptr, SW_SHOW);
 #endif
 
         std::cout << "[Image::show] Press ENTER to continue...\n";
@@ -217,7 +222,7 @@ namespace LibGraphics {
         return {data[idx], data[idx + 1], data[idx + 2]};
     }
 
-    void Image::redact(const Type::Rect& roi, uint8_t value) {
+    void Image::redact(const Rect &roi, uint8_t value) {
         if (!isValid()) return;
 
         int x0 = std::max(0, roi.X);
@@ -237,34 +242,49 @@ namespace LibGraphics {
                 }
             }
         }
+
+        invalidateCache();
     }
 
-    void Image::redact(const std::vector<Type::Rect>& rois, uint8_t value) {
-        for (const auto& r : rois) redact(r, value);
+    void Image::redact(const std::vector<Rect> &rois, uint8_t value) {
+        for (const auto &r: rois) redact(r, value);
     }
 
-    // NEW: cached cv::Mat accessor
-    cv::Mat& Image::mat() {
+    cv::Mat &Image::mat() {
         if (!isValid())
             throw std::runtime_error("[Image::mat] Invalid image");
 
-        if (cachedMat.empty()) {
-            int type = (channels == 1) ? CV_8UC1 : CV_8UC3;
-            cachedMat = cv::Mat(height, width, type, data.data()).clone();
+        if (!cachedColor.empty())
+            return cachedColor;
 
-            // Convert to grayscale once
-            if (channels == 3) {
-                cv::cvtColor(cachedMat, cachedMat, cv::COLOR_BGR2GRAY);
-                channels = 1;
-                data.assign(cachedMat.data, cachedMat.data + (width * height));
-            }
+        int type = (channels == 1) ? CV_8UC1 : CV_8UC3;
+        cachedColor = cv::Mat(height, width, type, data.data()).clone();
+        return cachedColor;
+    }
+
+    const cv::Mat &Image::mat() const {
+        return const_cast<Image *>(this)->mat();
+    }
+
+    cv::Mat &Image::matGray() {
+        if (!isValid())
+            throw std::runtime_error("[Image::matGray] Invalid image");
+
+        if (!cachedGray.empty())
+            return cachedGray;
+
+        cv::Mat &color = mat();
+
+        if (channels == 1) {
+            cachedGray = color.clone();
+        } else {
+            cv::cvtColor(color, cachedGray, cv::COLOR_BGR2GRAY);
         }
 
-        return cachedMat;
+        return cachedGray;
     }
 
-    const cv::Mat& Image::mat() const {
-        return const_cast<Image*>(this)->mat();
+    const cv::Mat &Image::matGray() const {
+        return const_cast<Image *>(this)->matGray();
     }
-
 }
