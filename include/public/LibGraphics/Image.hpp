@@ -10,6 +10,8 @@
 #include <array>
 #include <sstream>
 
+#include <opencv2/core.hpp>
+
 #include "export.hpp"
 
 using LibGraphics::Type::Rect;
@@ -22,10 +24,7 @@ namespace LibGraphics {
         int channels = 0; // 1 = grayscale, 3 = RGB
         std::string origin = "empty";
 
-        // Image() = default;
         Image() = default;
-
-        // Enige constructor die we implementeren in Image.cpp
         Image(int width, int height, int channels, std::vector<uint8_t> pixels);
 
         // Loading
@@ -40,27 +39,28 @@ namespace LibGraphics {
 
         // Transformations
         [[nodiscard]] Image toGrayscale() const;
-
         [[nodiscard]] Image crop(int x, int y, int width, int height) const;
-
         [[nodiscard]] Image clone() const;
 
         // Info
         [[nodiscard]] std::array<uint8_t, 3> getRGB(int x, int y) const;
-
         [[nodiscard]] bool isValid() const;
 
-        // Allows: if (image)
         explicit operator bool() const {
             return isValid();
         }
 
         // Redaction
         void redact(const Type::Rect &roi, uint8_t value = 0);
-
         void redact(const std::vector<Type::Rect> &rois, uint8_t value = 0);
 
+        // NEW: cached OpenCV matrix
+        cv::Mat& mat();
+        const cv::Mat& mat() const;
+
     private:
+        mutable cv::Mat cachedMat;
+
         static std::string mkTempFilename(
             const std::string &prefix = "libgraphics_",
             const std::string &ext = ".png"

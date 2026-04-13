@@ -65,8 +65,8 @@ MatchResult TemplateMatcher::matchTemplateSingle(
     const Image &match_target,
     const MatchOptions &options
 ) {
-    cv::Mat templateMat = Converter::ImageToMat(match_template);
-    cv::Mat targetMat = Converter::ImageToMat(match_target);
+    cv::Mat templateMat = match_template.mat();
+    cv::Mat targetMat = match_target.mat();
 
     // Ensure compatible formats
     ensureCompatibleFormats(templateMat, targetMat);
@@ -112,8 +112,8 @@ std::vector<MatchResult> TemplateMatcher::matchTemplateMultiple(
     const MatchOptions &options
 ) {
     std::vector<MatchResult> results;
-    cv::Mat templateMat = Converter::ImageToMat(match_template);
-    cv::Mat targetMat = Converter::ImageToMat(match_target);
+    cv::Mat templateMat = match_template.mat();
+    cv::Mat targetMat = match_target.mat();
 
     // Ensure compatible formats
     ensureCompatibleFormats(templateMat, targetMat);

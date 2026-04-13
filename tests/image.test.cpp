@@ -488,3 +488,76 @@ TEST_CASE("Redact multiple regions", "[Image][redact]") {
     auto untouched = img.getRGB(2, 2);
     REQUIRE(untouched[0] == 255);
 }
+
+TEST_CASE("Image::mat returns valid cv::Mat", "[Image][mat]") {
+    std::vector<uint8_t> pixels = {
+        255, 0, 0,
+        0, 255, 0,
+        0, 0, 255,
+        255, 255, 255
+    };
+
+    Image img(2, 2, 3, pixels);
+
+    cv::Mat& m = img.mat();
+
+    REQUIRE(m.rows == 2);
+    REQUIRE(m.cols == 2);
+    REQUIRE(m.type() == CV_8UC1); // wordt grayscale
+}
+
+TEST_CASE("Image::mat caches result", "[Image][mat][cache]") {
+    std::vector<uint8_t> pixels(100 * 100 * 3, 128);
+    Image img(100, 100, 3, pixels);
+
+    cv::Mat& m1 = img.mat();
+    cv::Mat& m2 = img.mat();
+
+    REQUIRE(m1.data == m2.data); // exact dezelfde buffer
+}
+
+TEST_CASE("Image::mat cache invalidates after redact", "[Image][mat][cache]") {
+    std::vector<uint8_t> pixels(4 * 4 * 3, 255);
+    Image img(4, 4, 3, pixels);
+
+    cv::Mat& before = img.mat();
+    REQUIRE(before.at<uint8_t>(0, 0) == 255);
+
+    img.redact(Rect{0, 0, 1, 1}, 0);
+
+    cv::Mat& after = img.mat();
+    REQUIRE(after.at<uint8_t>(0, 0) == 0);
+}
+
+TEST_CASE("Image::mat grayscale conversion matches toGrayscale", "[Image][mat][grayscale]") {
+    std::vector<uint8_t> pixels = {
+        10, 20, 30,
+        40, 50, 60
+    };
+
+    Image img(1, 2, 3, pixels);
+
+    Image gray = img.toGrayscale();
+    cv::Mat& m = img.mat();
+
+    REQUIRE(m.rows == 2);
+    REQUIRE(m.cols == 1);
+    REQUIRE(m.at<uint8_t>(0, 0) == gray.data[0]);
+    REQUIRE(m.at<uint8_t>(1, 0) == gray.data[1]);
+}
+
+TEST_CASE("Image::mat stays consistent after multiple calls and mutations", "[Image][mat][consistency]") {
+    std::vector<uint8_t> pixels(3 * 3 * 3, 200);
+    Image img(3, 3, 3, pixels);
+
+    cv::Mat& m1 = img.mat();
+    REQUIRE(m1.at<uint8_t>(0, 0) == 200);
+
+    img.redact(Rect{0, 0, 1, 1}, 50);
+
+    cv::Mat& m2 = img.mat();
+    REQUIRE(m2.at<uint8_t>(0, 0) == 50);
+
+    cv::Mat& m3 = img.mat();
+    REQUIRE(m3.data == m2.data); // cache blijft geldig
+}

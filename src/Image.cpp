@@ -21,7 +21,6 @@
 
 namespace LibGraphics {
 
-    // Remove alpha channel if present
     void Image::stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels) {
         if (channels == 4) {
             std::vector<uint8_t> rgb;
@@ -38,8 +37,8 @@ namespace LibGraphics {
         }
     }
 
-    // The ONLY constructor declared in the header
-    Image::Image(const int width, const int height, const int channels, std::vector<uint8_t> pixels): width(width), height(height), channels(channels)
+    Image::Image(int width, int height, int channels, std::vector<uint8_t> pixels)
+        : width(width), height(height), channels(channels)
     {
         if (width <= 0 || height <= 0 || channels <= 0) {
             throw std::invalid_argument("[Image] Invalid dimensions or channel count");
@@ -243,4 +242,29 @@ namespace LibGraphics {
     void Image::redact(const std::vector<Type::Rect>& rois, uint8_t value) {
         for (const auto& r : rois) redact(r, value);
     }
+
+    // NEW: cached cv::Mat accessor
+    cv::Mat& Image::mat() {
+        if (!isValid())
+            throw std::runtime_error("[Image::mat] Invalid image");
+
+        if (cachedMat.empty()) {
+            int type = (channels == 1) ? CV_8UC1 : CV_8UC3;
+            cachedMat = cv::Mat(height, width, type, data.data()).clone();
+
+            // Convert to grayscale once
+            if (channels == 3) {
+                cv::cvtColor(cachedMat, cachedMat, cv::COLOR_BGR2GRAY);
+                channels = 1;
+                data.assign(cachedMat.data, cachedMat.data + (width * height));
+            }
+        }
+
+        return cachedMat;
+    }
+
+    const cv::Mat& Image::mat() const {
+        return const_cast<Image*>(this)->mat();
+    }
+
 }
