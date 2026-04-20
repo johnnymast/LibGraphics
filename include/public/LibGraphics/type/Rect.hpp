@@ -3,6 +3,9 @@
 
 #include <algorithm>
 
+using std::max;
+using std::min;
+
 namespace LibGraphics::Type {
 
     struct LIBGRAPHICS_API Rect {
@@ -19,11 +22,11 @@ namespace LibGraphics::Type {
             return Width * Height;
         }
 
-        Rect intersect(const Rect& other) const {
-            int nx = std::max(X, other.X);
-            int ny = std::max(Y, other.Y);
-            int nw = std::min(X + Width, other.X + other.Width) - nx;
-            int nh = std::min(Y + Height, other.Y + other.Height) - ny;
+        [[nodiscard]] Rect intersect(const Rect& other) const {
+            const int nx = max(X, other.X);
+            const int ny = max(Y, other.Y);
+            const int nw = min(X + Width, other.X + other.Width) - nx;
+            const int nh = min(Y + Height, other.Y + other.Height) - ny;
             return nw > 0 && nh > 0 ? Rect{nx, ny, nw, nh} : Rect{0, 0, 0, 0};
         }
     };
