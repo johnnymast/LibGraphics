@@ -126,7 +126,6 @@ namespace LibGraphics {
 
     Image Image::crop(int x, int y, int w, int h) const {
         if (x < 0 || y < 0 || x + w > width || y + h > height) {
-            std::cerr << "[Image::crop] Invalid region\n";
             return Image();
         }
 
@@ -147,6 +146,25 @@ namespace LibGraphics {
         }
 
         out.origin = origin;
+        return out;
+    }
+
+    Image Image::resize(int newWidth, int newHeight) const {
+        if (!isValid())
+            return Image();
+
+        // Kies juiste bronmat (kleur of grijs)
+        const cv::Mat& src = (channels == 1) ? matGray() : mat();
+
+        cv::Mat dst;
+        cv::resize(src, dst, cv::Size(newWidth, newHeight), 0, 0, cv::INTER_AREA);
+
+        // Maak nieuwe pixelbuffer
+        std::vector<uint8_t> pixels;
+        pixels.assign(dst.data, dst.data + dst.total() * dst.channels());
+
+        Image out(newWidth, newHeight, dst.channels(), std::move(pixels));
+        out.origin = "resize(" + std::to_string(newWidth) + "x" + std::to_string(newHeight) + ")";
         return out;
     }
 

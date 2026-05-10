@@ -5,6 +5,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include <leptonica/allheaders.h>
 #include <opencv2/opencv.hpp>
 
 using namespace LibGraphics::Utils;
@@ -232,7 +233,6 @@ TEST_CASE("Converter::MatToImage - Non-Continuous Mat", "[Converter]") {
     CHECK(img.data[1] == 20); // Green
     CHECK(img.data[2] == 10); // Blue
 }
-
 
 TEST_CASE("Converter Round-Trip - Image to Mat to Image", "[Converter]") {
     // Load original image

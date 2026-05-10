@@ -71,6 +71,11 @@ namespace LibGraphics::Utils {
     }
 
     Image Converter::pixToImage(Pix* pix) {
+
+        if (!pix) {
+            throw std::runtime_error("pixToImage: null Pix pointer");
+        }
+
         int width = pixGetWidth(pix);
         int height = pixGetHeight(pix);
         int depth = pixGetDepth(pix);

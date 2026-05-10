@@ -85,9 +85,9 @@ set_target_properties(LibGraphics PROPERTIES
         SOVERSION 1
 )
 
-if(LIBGRAPHICS_ENABLE_TESTS)
+#if(LIBGRAPHICS_ENABLE_TESTS)
     include(Testing-LibGraphics)
-endif()
+#endif()
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)

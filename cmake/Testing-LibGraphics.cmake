@@ -28,7 +28,8 @@ add_executable(graphics_testsuite
 target_include_directories(graphics_testsuite
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/private
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/public
         ${OpenCV_INCLUDE_DIRS}
 )
 

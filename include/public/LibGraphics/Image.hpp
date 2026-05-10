@@ -36,6 +36,7 @@ namespace LibGraphics {
 
         [[nodiscard]] Image toGrayscale() const;
         [[nodiscard]] Image crop(int x, int y, int width, int height) const;
+        [[nodiscard]] Image resize(int newWidth, int newHeight) const;
         [[nodiscard]] Image clone() const;
 
         [[nodiscard]] std::array<uint8_t, 3> getRGB(int x, int y) const;

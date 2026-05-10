@@ -1,6 +1,6 @@
 #include "LibGraphics/Image.hpp"
-
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
 #include <filesystem>
 #include <iostream>
 #include <fstream>
@@ -549,17 +549,14 @@ TEST_CASE("Image::mat stays consistent after multiple calls and mutations", "[Im
     REQUIRE(m3.data == m2.data); // cache blijft geldig
 }
 
-//
-// NEW matGray() TESTS
-//
-
-TEST_CASE("Image::matGray returns grayscale cv::Mat", "[Image][matGray]") {
+TEST_CASE("Image::matGray returns correct BGR grayscale conversion", "[Image][matGray]") {
     std::vector<uint8_t> pixels = {
         10, 20, 30,
         40, 50, 60
     };
 
     Image img(1, 2, 3, pixels);
+    REQUIRE(img.isValid());
 
     cv::Mat& gray = img.matGray();
 
@@ -567,10 +564,18 @@ TEST_CASE("Image::matGray returns grayscale cv::Mat", "[Image][matGray]") {
     REQUIRE(gray.cols == 1);
     REQUIRE(gray.type() == CV_8UC1);
 
-    Image expected = img.toGrayscale();
-    REQUIRE(gray.at<uint8_t>(0, 0) == expected.data[0]);
-    REQUIRE(gray.at<uint8_t>(1, 0) == expected.data[1]);
+    uint8_t expected0 = static_cast<uint8_t>(
+        0.114 * 10 + 0.587 * 20 + 0.299 * 30
+    );
+
+    uint8_t expected1 = static_cast<uint8_t>(
+        0.114 * 40 + 0.587 * 50 + 0.299 * 60
+    );
+
+    REQUIRE(gray.at<uint8_t>(0, 0) == Catch::Approx(expected0).margin(1));
+    REQUIRE(gray.at<uint8_t>(1, 0) == Catch::Approx(expected1).margin(1));
 }
+
 
 TEST_CASE("Image::matGray caches result", "[Image][matGray][cache]") {
     std::vector<uint8_t> pixels(100 * 100 * 3, 128);
@@ -609,4 +614,91 @@ TEST_CASE("Image::matGray stays consistent after multiple calls and mutations", 
 
     cv::Mat& g3 = img.matGray();
     REQUIRE(g3.data == g2.data); // cache blijft geldig
+}
+
+TEST_CASE("Image::resize scales image correctly", "[Image][resize]") {
+
+    SECTION("Resize RGB image 4x4 → 2x2") {
+        // 4x4 RGB test image with predictable pattern
+        std::vector<uint8_t> pixels(4 * 4 * 3);
+        for (int i = 0; i < 4 * 4 * 3; i++)
+            pixels[i] = static_cast<uint8_t>(i);
+
+        Image img(4, 4, 3, pixels);
+        REQUIRE(img.isValid());
+
+        Image small = img.resize(2, 2);
+        REQUIRE(small.isValid());
+        REQUIRE(small.width == 2);
+        REQUIRE(small.height == 2);
+        REQUIRE(small.channels == 3);
+        REQUIRE(small.data.size() == 2 * 2 * 3);
+    }
+
+    SECTION("Resize grayscale image 4x4 → 2x2") {
+        std::vector<uint8_t> pixels = {
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9,10,11,12,
+           13,14,15,16
+        };
+
+        Image img(4, 4, 1, pixels);
+        REQUIRE(img.isValid());
+
+        Image small = img.resize(2, 2);
+        REQUIRE(small.isValid());
+        REQUIRE(small.width == 2);
+        REQUIRE(small.height == 2);
+        REQUIRE(small.channels == 1);
+        REQUIRE(small.data.size() == 4);
+    }
+
+    SECTION("Resize preserves approximate pixel values (downscale)") {
+        // Simple 2x2 RGB image
+        std::vector<uint8_t> pixels = {
+            255, 0, 0,     // red
+            0, 255, 0,     // green
+            0, 0, 255,     // blue
+            255, 255, 255  // white
+        };
+
+        Image img(2, 2, 3, pixels);
+        REQUIRE(img.isValid());
+
+        // Resize to 1x1 → should be roughly the average color
+        Image tiny = img.resize(1, 1);
+        REQUIRE(tiny.isValid());
+        REQUIRE(tiny.width == 1);
+        REQUIRE(tiny.height == 1);
+        REQUIRE(tiny.channels == 3);
+
+        auto px = tiny.getRGB(0, 0);
+
+        // INTER_AREA produces weighted average; we check approximate range
+        REQUIRE(px[0] >= 120);
+        REQUIRE(px[1] >= 120);
+        REQUIRE(px[2] >= 120);
+    }
+
+    SECTION("Resize invalid image returns invalid") {
+        Image img; // default invalid
+        REQUIRE_FALSE(img.isValid());
+
+        Image out = img.resize(10, 10);
+        REQUIRE_FALSE(out.isValid());
+        REQUIRE(out.data.empty());
+    }
+
+    SECTION("Resize does not modify original image") {
+        std::vector<uint8_t> pixels(4 * 4 * 3, 100);
+        Image img(4, 4, 3, pixels);
+
+        Image small = img.resize(2, 2);
+
+        REQUIRE(img.width == 4);
+        REQUIRE(img.height == 4);
+        REQUIRE(img.channels == 3);
+        REQUIRE(img.data.size() == 4 * 4 * 3);
+    }
 }

@@ -1,4 +1,4 @@
-#include "../../include/LibGraphics/LibGraphics.hpp"
+#include "LibGraphics/LibGraphics.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
