@@ -31,7 +31,7 @@ namespace LibGraphics {
         return (std::filesystem::temp_directory_path() / oss.str()).string();
     }
 
-    void Image::invalidateCache() {
+    void Image::invalidateCache() const {
         cachedColor.release();
         cachedGray.release();
     }
@@ -149,22 +149,27 @@ namespace LibGraphics {
         return out;
     }
 
-    Image Image::resize(int newWidth, int newHeight) const {
-        if (!isValid())
+    Image Image::resize(int newW, int newH) const {
+        if (!isValid() || newW <= 0 || newH <= 0) {
             return Image();
+        }
 
-        // Kies juiste bronmat (kleur of grijs)
-        const cv::Mat& src = (channels == 1) ? matGray() : mat();
+        cv::Mat src = mat(); // jouw cached mat()
+
+        int interp = (newW < width || newH < height)
+                     ? cv::INTER_AREA      // beste voor downscale
+                     : cv::INTER_LINEAR;   // beste voor upscale
 
         cv::Mat dst;
-        cv::resize(src, dst, cv::Size(newWidth, newHeight), 0, 0, cv::INTER_AREA);
+        cv::resize(src, dst, cv::Size(newW, newH), 0, 0, interp);
 
-        // Maak nieuwe pixelbuffer
-        std::vector<uint8_t> pixels;
-        pixels.assign(dst.data, dst.data + dst.total() * dst.channels());
+        Image out;
+        out.width = newW;
+        out.height = newH;
+        out.channels = channels;
+        out.data.assign(dst.data, dst.data + dst.total() * dst.elemSize());
+        out.origin = origin;
 
-        Image out(newWidth, newHeight, dst.channels(), std::move(pixels));
-        out.origin = "resize(" + std::to_string(newWidth) + "x" + std::to_string(newHeight) + ")";
         return out;
     }
 

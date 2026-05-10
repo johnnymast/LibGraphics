@@ -57,7 +57,7 @@ namespace LibGraphics {
         mutable cv::Mat cachedColor;
         mutable cv::Mat cachedGray;
 
-        void invalidateCache();
+        void invalidateCache() const;
         static void stripAlpha(std::vector<uint8_t>& pixels, int width, int height, int& channels);
 
         static std::string mkTempFilename(
